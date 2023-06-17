@@ -1,0 +1,33 @@
+.scroll-container {
+  overflow-x: scroll;
+  -webkit-overflow-scrolling: touch; /* for smooth scrolling on mobile */
+  width: 100%;
+}
+
+.scroll-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.scroll-item {
+  width: 200px;
+  height: 200px;
+  margin-right: 20px;
+}
+
+/* CSS for the custom scrollbar */
+.scrollbarDiv::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+.scrollbarDiv::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 20px;
+}
+
+/* Handle */
+.scrollbarDiv::-webkit-scrollbar-thumb {
+  background: #d3d3d3;
+  border-radius: 20px;
+}
