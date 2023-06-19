@@ -50,7 +50,7 @@ function SecondLevel({ category, setDrawerOpen }) {
                 textDecoration: "none",
               }}
               component={RouterLink}
-              to={`/search/${category.slug}`}
+              to={`/search/${category.slug}/${category.id}`}
               id="nested-list-subheader"
               onClick={() => setDrawerOpen(false)}
             >
