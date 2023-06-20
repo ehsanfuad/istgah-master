@@ -3,16 +3,19 @@ import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import "./HomeCats.scss";
 import useFetch from "../../hooks/useFetch";
+import LazyImage from "../LazyImage/LazyImage";
 
 const Cat = ({ image, name, slug }) => {
+  // console.log("imageUrl", process.env.REACT_APP_UPLOAD_URL + image);
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
-      <img
+      <LazyImage imageUrl={process.env.REACT_APP_UPLOAD_URL + image} />
+      {/* <img
         src={process.env.REACT_APP_UPLOAD_URL + image}
         alt={name}
         style={{ width: "80%" }}
         loading="lazy"
-      />
+      /> */}
       <Typography
         variant="body1"
         textAlign="center"
@@ -33,7 +36,7 @@ function HomeCats() {
       <Box mb={3}>
         <Typography variant="h6">دسته بندی های فروشگاه</Typography>
       </Box>
-      <Box>
+      <Box width="100%">
         <Grid container direction="row" rowSpacing={3} justifyContent="center">
           {categories.map((category, index) => {
             if (category.parentId === 0) {
