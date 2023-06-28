@@ -8,7 +8,7 @@ function Breadcrumb({ categoryId }) {
     `/category/getParents/${categoryId}`
   );
   let parentCategories = [];
-  parentCategories = res.data;
+  parentCategories = res;
   if (loading) return "...";
   return (
     <Box

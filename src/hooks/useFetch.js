@@ -5,18 +5,22 @@ const useFetch = (url) => {
   const [res, setRes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const res = await makeRequest.get(url);
-        setRes(res);
+        // const res = await makeRequest.get(url);
+        const response = await fetch(process.env.REACT_APP_API_URL + url, {
+          headers: {
+            Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
+          },
+        });
+        const data = await response.json();
+        setRes(data);
+        setLoading(false);
       } catch (error) {
-        console.log(error);
         setError(true);
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, [url]);

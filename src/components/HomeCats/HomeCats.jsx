@@ -6,7 +6,6 @@ import useFetch from "../../hooks/useFetch";
 import LazyImage from "../LazyImage/LazyImage";
 
 const Cat = ({ image, name, slug }) => {
-  // console.log("imageUrl", process.env.REACT_APP_UPLOAD_URL + image);
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <LazyImage
@@ -34,7 +33,7 @@ const Cat = ({ image, name, slug }) => {
 function HomeCats() {
   const { res, loading, error } = useFetch(`/category/getAll`);
   if (loading) return "در حال بارگذاری";
-  let categories = res.data;
+  let categories = res;
   return (
     <Box display="flex" flexDirection="column" gap={1} alignItems="center">
       <Box mb={3}>

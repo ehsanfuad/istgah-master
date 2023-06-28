@@ -92,7 +92,7 @@ function Navbar() {
   }, [location.pathname]);
 
   if (loading) return "Loading";
-  const categories = res.data;
+  const categories = res;
   const handleClick = (event, children) => {
     setAnchorEl(event.currentTarget);
     setSubCats(children);

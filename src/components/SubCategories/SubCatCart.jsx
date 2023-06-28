@@ -2,6 +2,7 @@ import { Box, Link, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { display } from "@mui/system";
 import React from "react";
+import LazyImage from "../LazyImage/LazyImage";
 
 function SubCatCart({ subCat }) {
   return (
@@ -30,16 +31,15 @@ function SubCatCart({ subCat }) {
             width: "100px",
           }}
         >
-          <img
-            src={
+          <LazyImage
+            imageUrl={
               process.env.REACT_APP_UPLOAD_URL +
               subCat.image.formats.thumbnail.url
             }
-            alt={subCat.name}
-            style={{ width: "100%", objectFit: "contain" }}
+            width={100}
+            height={100}
           />
         </Box>
-
         <Typography
           sx={{
             width: "100%",

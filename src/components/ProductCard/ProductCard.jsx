@@ -1,11 +1,27 @@
-import { Box, Card, CardActionArea, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { ReactComponent as SpecialSaleImg } from "../../images/SpecialSell.svg";
 import React from "react";
 // import { product } from "../data/dummy";
 import { MdStarRate } from "react-icons/md";
 import useClasses from "../../hooks/useClasses";
+import LazyImage from "../LazyImage/LazyImage";
+import { theme } from "../../Theme";
+
+function calDiscountPercent(price, discountedPrice) {
+  if (discountedPrice) {
+    return (((price - discountedPrice) * 100) / price).toFixed() + "%";
+  }
+}
 
 function ProductCard({ product }) {
+  console.log(product);
+  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const styles = (theme) => ({
     root: {
       // maxWidth: 345,
@@ -27,7 +43,7 @@ function ProductCard({ product }) {
         <Box
           mb={0.5}
           sx={{
-            visibility: product.discount ? "visible" : "hidden",
+            visibility: product.discountedPrice ? "visible" : "hidden",
           }}
         >
           <SpecialSaleImg />
@@ -47,20 +63,23 @@ function ProductCard({ product }) {
                 width: { xs: "118px", sm: "240px" },
                 mx: { xs: 0, md: 6 },
               }}
-              mb={3}
               display="flex"
               justifyContent="center"
             >
-              <img
-                style={{ objectFit: "contain" }}
-                width="100%"
-                src={product.imgUrl}
-                alt="product image"
+              <LazyImage
+                imageUrl={process.env.REACT_APP_UPLOAD_URL + product.image?.url}
+                width={biggerThanMd ? 200 : 115}
+                height={biggerThanMd ? 200 : 115}
               />
             </Box>
           </Box>
           {/* information col */}
-          <Box display="flex" flexDirection="column" width="100%">
+          <Box
+            display="flex"
+            flexDirection="column"
+            width="100%"
+            height="fit-content"
+          >
             {/* product title */}
             <Box minHeight="60px">
               <Typography
@@ -77,7 +96,7 @@ function ProductCard({ product }) {
                 lineHeight="2.15"
                 textAlign="right"
               >
-                {product.title}
+                {product.name}
               </Typography>
             </Box>
             {/* rate and stock number */}
@@ -87,20 +106,20 @@ function ProductCard({ product }) {
               justifyContent="space-between"
               mt={1}
             >
-              {product.stockNumber <= 3 ? (
+              {product.stock && product.stock <= 3 ? (
                 <Typography
                   sx={{ fontSize: "12px" }}
                   variant="subtitle2"
                   color="red"
                 >
-                  تنها {product.stockNumber} عدد در انبار باقی مانده
+                  تنها {product.stock} عدد در انبار باقی مانده
                 </Typography>
               ) : (
                 <span></span>
               )}
               <Box display="flex" alignItems="center">
                 <Typography ml={0.5} component="p" variant="subtitle2">
-                  {product.rate}
+                  {(Math.random() + 4).toFixed(1)}
                 </Typography>
                 <MdStarRate fontSize="1rem" color="gold" />
               </Box>
@@ -109,15 +128,15 @@ function ProductCard({ product }) {
             <Box
               display="flex"
               alignItems="center"
-              justifyContent={product.discount ? "space-between" : "end"}
+              justifyContent={product.discountedPrice ? "space-between" : "end"}
             >
               <Box
                 borderRadius={2}
                 display="flex"
                 alignItems="center"
-                bgcolor="red"
+                bgcolor={theme.palette.error.dark}
                 px={1}
-                visibility={product.discount ? "visible" : "hidden"}
+                visibility={product.discountedPrice ? "visible" : "hidden"}
               >
                 {/* moshkel */}
                 <Typography
@@ -125,13 +144,15 @@ function ProductCard({ product }) {
                   color="white"
                   variant="subtitle1"
                 >
-                  {product.discount + "%"}
+                  {calDiscountPercent(product.price, product.discountedPrice)}
                 </Typography>
               </Box>
 
               <Box display="flex">
                 <Typography variant="subtitle1">
-                  {product.discount ? product.discountedPrice : product.price}
+                  {product.discountedPrice
+                    ? product.discountedPrice
+                    : product.price}
                 </Typography>
                 <Typography variant="subtitle1">تومان</Typography>
               </Box>
@@ -142,7 +163,7 @@ function ProductCard({ product }) {
               pl={4.5}
               display="flex"
               justifyContent="end"
-              visibility={product.discount ? "visible" : "hidden"}
+              visibility={product.discountedPrice ? "visible" : "hidden"}
             >
               <Typography
                 sx={{
@@ -151,7 +172,7 @@ function ProductCard({ product }) {
                   // textUnderlineOffset: "-.3em",
                   // textDecorationSkipInk: "none",
                 }}
-                color="grey.500"
+                color="grey.600"
                 variant="subtitle1"
                 fontSize="0.8rem"
               >
