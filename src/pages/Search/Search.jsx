@@ -33,7 +33,8 @@ function Search() {
                 underline="none"
                 color="text.secondary"
                 component={RouterLink}
-                to={`/product/${product.id}`}
+                to={`/product/${product.id}/${categoryId}`}
+                target="_blank"
               >
                 <ProductCard product={product} />
               </Link>

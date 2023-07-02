@@ -20,8 +20,8 @@ function calDiscountPercent(price, discountedPrice) {
 }
 
 function ProductCard({ product }) {
-  console.log(product);
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
   const styles = (theme) => ({
     root: {
       // maxWidth: 345,
@@ -68,8 +68,8 @@ function ProductCard({ product }) {
             >
               <LazyImage
                 imageUrl={process.env.REACT_APP_UPLOAD_URL + product.image?.url}
-                width={biggerThanMd ? 200 : 115}
-                height={biggerThanMd ? 200 : 115}
+                width={biggerThanSm ? 200 : 115}
+                height={biggerThanSm ? 200 : 115}
               />
             </Box>
           </Box>
