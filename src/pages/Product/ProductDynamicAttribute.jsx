@@ -5,13 +5,21 @@ import { FiCheck } from "react-icons/fi";
 import ProductColor from "./ProductColor";
 import ProductProperty from "./ProductProperty";
 function ProductDynamicAttribute({ product, type }) {
-  switch (type) {
+  switch (type.name) {
     case "رنگ":
       return <ProductColor attributes={product.colors} type={type} />;
-    case "نوع آسیاب":
-      return <ProductProperty attributes={product.grinds} type={type} />;
     case "وزن":
-      return <ProductProperty attributes={product.weights} type={type} />;
+      return (
+        <ProductProperty
+          attributes={product.weights}
+          type={type}
+          name="weight"
+        />
+      );
+    case "آسیاب":
+      return (
+        <ProductProperty attributes={product.grinds} type={type} name="grind" />
+      );
     case "ساده":
       return null;
     default:

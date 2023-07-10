@@ -12,12 +12,13 @@ import { MdStarRate } from "react-icons/md";
 import useClasses from "../../hooks/useClasses";
 import LazyImage from "../LazyImage/LazyImage";
 import { theme } from "../../Theme";
+import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
 
-function calDiscountPercent(price, discountedPrice) {
-  if (discountedPrice) {
-    return (((price - discountedPrice) * 100) / price).toFixed() + "%";
-  }
-}
+// function calDiscountPercent(price, discountedPrice) {
+//   if (discountedPrice) {
+//     return (((price - discountedPrice) * 100) / price).toFixed() + "%";
+//   }
+// }
 
 function ProductCard({ product }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -67,7 +68,9 @@ function ProductCard({ product }) {
               justifyContent="center"
             >
               <LazyImage
-                imageUrl={process.env.REACT_APP_UPLOAD_URL + product.image?.url}
+                imageUrl={
+                  process.env.REACT_APP_UPLOAD_URL + product?.image?.orginal
+                }
                 width={biggerThanSm ? 200 : 115}
                 height={biggerThanSm ? 200 : 115}
               />
@@ -148,13 +151,13 @@ function ProductCard({ product }) {
                 </Typography>
               </Box>
 
-              <Box display="flex">
-                <Typography variant="subtitle1">
+              <Box display="flex" gap={0.5}>
+                <Typography variant="body2">
                   {product.discountedPrice
-                    ? product.discountedPrice
-                    : product.price}
+                    ? formatMoney(product.discountedPrice)
+                    : formatMoney(product.price)}
                 </Typography>
-                <Typography variant="subtitle1">تومان</Typography>
+                <Typography variant="body2">تومان</Typography>
               </Box>
             </Box>
             {/* show main price */}

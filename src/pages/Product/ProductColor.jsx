@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import {
   Divider,
@@ -9,37 +9,34 @@ import {
 } from "@mui/material";
 import { FiCheck } from "react-icons/fi";
 import { theme } from "../../Theme";
+import { colorUpdate } from "../../store/cartReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 function ProductColor({ attributes, type }) {
-  const [value, setValue] = useState(null);
+  const dispatch = useDispatch();
+  const color = useSelector((state) => state.cart.color);
   const handleChangeValue = (e, newValue) => {
-    setValue(newValue);
+    dispatch(colorUpdate(newValue));
   };
-  const checkValue = () => {
-    if (value != null) {
-      return value;
-    } else {
-      return attributes[0];
-    }
-  };
+
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   const ForDesktop = () => {
     return (
       <Box display="flex" flexDirection="column" mt={1}>
         <Box>
           <Typography fontSize="18px" variant="body1" component="p">
-            {`${type} : ${value ? value.name : attributes[0].name}`}
+            {`${type.name} : ${color ? color.name : attributes[0].name}`}
           </Typography>
         </Box>
         <Box mb={2}>
           <ToggleButtonGroup
             color="primary"
-            value={value ? value : attributes[0]}
+            value={color ? color : attributes[0]}
             exclusive
             onChange={handleChangeValue}
             sx={{ maxWidth: "300px", display: "block" }}
           >
-            {attributes.map((color, index) => (
+            {attributes.map((attribute, index) => (
               <ToggleButton
                 sx={{
                   border: 0,
@@ -51,23 +48,23 @@ function ProductColor({ attributes, type }) {
                   },
                 }}
                 key={index}
-                value={color}
-                disabled={color === value ? true : false}
+                value={attribute}
+                disabled={attribute === color ? true : false}
               >
                 <Box
                   sx={{ width: "25px", height: "25px" }}
-                  bgcolor={color.value}
+                  bgcolor={attribute.value}
                   borderRadius={4}
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
                   border={1}
-                  borderColor="GrayText"
+                  borderattribute="GrayText"
                 >
-                  {color === checkValue() ? (
+                  {attribute === color ? (
                     <FiCheck
                       fontSize="20px"
-                      color={checkValue().name === "مشکی" ? "white" : "black"}
+                      color={color.name === "مشکی" ? "white" : "black"}
                     />
                   ) : null}
                 </Box>
@@ -84,7 +81,7 @@ function ProductColor({ attributes, type }) {
         <Divider sx={{ marginTop: 1 }} />
         <Box mb={1} mt={1.5}>
           <Typography fontSize="0.9rem" variant="body1" component="p">
-            {`${type} : ${value ? value.name : attributes[0].name}`}
+            {`${type.name} : ${color ? color.name : attributes[0].name}`}
           </Typography>
         </Box>
         <Box
@@ -99,7 +96,7 @@ function ProductColor({ attributes, type }) {
         >
           <ToggleButtonGroup
             color="primary"
-            value={value ? value : attributes[0]}
+            value={color ? color : attributes[0]}
             exclusive
             onChange={handleChangeValue}
             sx={{ maxWidth: "300px", display: "block" }}
@@ -120,7 +117,7 @@ function ProductColor({ attributes, type }) {
                   marginLeft: "10px !important",
                 }}
                 value={attribute}
-                disabled={attribute === value ? true : false}
+                disabled={attribute === color ? true : false}
               >
                 <Box
                   sx={{ width: "15px", height: "15px" }}
@@ -133,10 +130,10 @@ function ProductColor({ attributes, type }) {
                   borderColor="GrayText"
                   ml={1}
                 >
-                  {attribute === checkValue() ? (
+                  {attribute === color ? (
                     <FiCheck
                       fontSize="20px"
-                      color={checkValue().name === "مشکی" ? "white" : "black"}
+                      color={color.name === "مشکی" ? "white" : "black"}
                     />
                   ) : null}
                 </Box>

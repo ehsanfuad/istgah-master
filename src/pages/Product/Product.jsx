@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useFetch from "../../hooks/useFetch";
 import { useParams } from "react-router-dom";
 import { Box, Container, useMediaQuery } from "@mui/material";
@@ -12,24 +12,23 @@ import ProductInfoCard from "./ProductInfoCard";
 import ProductComments from "./ProductComments";
 import ProductInfoCardMobile from "./ProductInfoCardMobile";
 import { useDispatch, useSelector } from "react-redux";
-import { colorUpdate } from "../../store/cartReducer";
+import useProduct from "../../hooks/useProduct";
 
 function Product() {
-  const test = useSelector((state) => state.cart.color);
+  const color = useSelector((state) => state.cart.color);
+  const weight = useSelector((state) => state.cart.weight);
+  const grind = useSelector((state) => state.cart.grind);
   const dispatch = useDispatch();
-  console.log("seluni", test);
-
   const params = useParams();
   const productId = params.id;
   const categoryId = params.categoryId;
-  const { res, loading, error } = useFetch(`/product/getProduct/${productId}`);
-  const product = res;
+  const { product, loading, error } = useProduct(
+    `/product/getProduct/${productId}`
+  );
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   if (loading) return "...";
-  console.log(product);
   return (
     <Box sx={{ paddingBottom: mobileVersion ? "82px" : "0" }}>
-      <button onClick={() => dispatch(colorUpdate("red"))}>test</button>
       <Container maxWidth="xl">
         <Box pt={2}>
           <Breadcrumb categoryId={categoryId} />
@@ -54,10 +53,6 @@ function Product() {
                         key={index}
                       />
                     ))}
-                    {/* <ProductDynamicAttribute
-                      attributes={product.weights}
-                      type={product.product_types}
-                    /> */}
                     <ProductFeatures features={product.features} />
                   </Box>
                 </Box>

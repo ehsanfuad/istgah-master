@@ -12,10 +12,9 @@ function Search() {
   const categorySlug = params.category;
   const categoryId = params.id;
   let products = "";
-  const { res, loading, error } = useFetch(
-    `/product/getProducts/${categoryId}`
-  );
+  const { res, loading, error } = useFetch(`/product/getAll/${categoryId}`);
   if (loading) return "...";
+  console.log(res);
   products = res;
   return (
     <Container maxWidth="xl">

@@ -1,11 +1,15 @@
 import React from "react";
 import { Box, Button, useMediaQuery, Typography } from "@mui/material";
 import { theme } from "../../Theme";
-function calDiscountPercent(price, discountedPrice) {
-  if (discountedPrice) {
-    return (((price - discountedPrice) * 100) / price).toFixed() + "%";
-  }
-}
+import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
+
+// function formatMoney(number) {
+//   const formattedNumber = number.toLocaleString("fa-IR", {
+//     useGrouping: true,
+//     minimumFractionDigits: 0,
+//   });
+//   return formattedNumber;
+// }
 function ProductInfoCardMobile({ product }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   if (mobileVersion) {
@@ -46,9 +50,9 @@ function ProductInfoCardMobile({ product }) {
                   // textDecorationSkipInk: "none",
                 }}
                 color="grey.500"
-                variant="caption"
+                // variant="subtitle2"
               >
-                {product.price}
+                {formatMoney(product.price)}
               </Typography>
               <Box
                 sx={{ width: "fit-content" }}
@@ -64,20 +68,25 @@ function ProductInfoCardMobile({ product }) {
                   color="white"
                   variant="caption"
                 >
-                  {calDiscountPercent(product.price, product.discountedPrice) +
-                    "%"}
+                  {calDiscountPercent(product.price, product.discountedPrice)}
                 </Typography>
               </Box>
             </Box>
-            <Box display="flex" alignItems="center" justifyContent="end" mb={1}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="end"
+              mb={1}
+              gap={0.5}
+            >
               <Typography
                 sx={{ fontSize: "1.2rem" }}
-                variant="subtitle2"
+                variant="body2"
                 component="span"
               >
                 {product.discountedPrice
-                  ? product.discountedPrice
-                  : product.price}
+                  ? formatMoney(product.discountedPrice)
+                  : formatMoney(product.price)}
               </Typography>
               <Typography sx={{ fontSize: "0.7rem" }} component="span">
                 تومان

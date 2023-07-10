@@ -11,15 +11,27 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { theme } from "../../Theme";
+import { useDispatch, useSelector } from "react-redux";
+import { grindUpdate, weightUpdate } from "../../store/cartReducer";
 
-function ProductProperty({ attributes, type }) {
+function ProductProperty({ attributes, type, name }) {
+  const dispatch = useDispatch();
+  const property = useSelector((state) => state.cart[name]);
+
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
-  const [value, setValue] = useState(null);
   const handleChangeValue = (event, newValue) => {
     if (mobileVersion) {
-      setValue(newValue);
+      if (name == "grind") {
+        dispatch(grindUpdate(newValue));
+      } else {
+        dispatch(weightUpdate(newValue));
+      }
     } else {
-      setValue(event.target.value);
+      if (name == "grind") {
+        dispatch(grindUpdate(event.target.value));
+      } else {
+        dispatch(weightUpdate(event.target.value));
+      }
     }
   };
 
@@ -28,13 +40,13 @@ function ProductProperty({ attributes, type }) {
       <Box display="flex" flexDirection="column" mt={1}>
         <Box mb={1}>
           <Typography fontSize="18px" variant="body1" component="p">
-            {`${type} : ${value ? value.name : attributes[0].name}`}
+            {`${type.name} : ${property ? property.name : attributes[0].name}`}
           </Typography>
         </Box>
         <Box mb={2}>
           <Select
             id="demo-simple-select"
-            value={value ? value : attributes[0]}
+            value={property ? property : attributes[0]}
             onChange={handleChangeValue}
             sx={{ minWidth: "250px" }}
           >
@@ -55,7 +67,7 @@ function ProductProperty({ attributes, type }) {
         <Divider />
         <Box mb={1} mt={1.5}>
           <Typography fontSize="0.9rem" variant="body1" component="p">
-            {`${type} : ${value ? value.name : attributes[0].name}`}
+            {`${type.name} : ${property ? property.name : attributes[0].name}`}
           </Typography>
         </Box>
         <Box
@@ -70,7 +82,7 @@ function ProductProperty({ attributes, type }) {
         >
           <ToggleButtonGroup
             color="primary"
-            value={value ? value : attributes[0]}
+            value={property ? property : attributes[0]}
             exclusive
             onChange={handleChangeValue}
             sx={{ maxWidth: "300px", display: "block" }}
@@ -90,7 +102,7 @@ function ProductProperty({ attributes, type }) {
                   marginLeft: "10px !important",
                 }}
                 value={attribute}
-                disabled={attribute === value ? true : false}
+                disabled={attribute === property ? true : false}
               >
                 {attribute.name}
               </ToggleButton>

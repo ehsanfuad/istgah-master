@@ -33,8 +33,7 @@ function SubCatCart({ subCat }) {
         >
           <LazyImage
             imageUrl={
-              process.env.REACT_APP_UPLOAD_URL +
-              subCat.image.formats.thumbnail.url
+              process.env.REACT_APP_UPLOAD_URL + subCat?.image?.thumbnail
             }
             width={100}
             height={100}

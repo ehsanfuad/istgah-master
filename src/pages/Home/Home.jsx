@@ -10,7 +10,7 @@ import BlogPost from "../../components/BlogPost/BlogPost";
 function Home() {
   return (
     <div>
-      <Slider />
+      {/* <Slider /> */}
       <Container maxWidth="xl">
         <Box my={2}>
           <InfoCard />

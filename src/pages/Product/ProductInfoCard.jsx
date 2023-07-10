@@ -3,10 +3,27 @@ import { Box, Divider, Typography, Button, useMediaQuery } from "@mui/material";
 import { BiCoffeeTogo } from "react-icons/bi";
 import { FiTruck } from "react-icons/fi";
 import { theme } from "../../Theme";
+import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
+import { useSelector } from "react-redux";
 
 function ProductInfoCard({ product }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
-
+  console.log(product);
+  // const color = useSelector((state) => state.cart.color);
+  // const weight = useSelector((state) => state.cart.weight);
+  // const grind = useSelector((state) => state.cart.grind);
+  // const add = (product) => {
+  //   dispatch(
+  //     addToCart({
+  //       id: product.id,
+  //       name: product.name,
+  //       description: product.description,
+  //       image: process.env.REACT_APP_UPLOAD_URL + product.image,
+  //       price: color.price ? color.price : product.price,
+  //       color: color,
+  //     })
+  //   );
+  // };
   const ForDesktop = () => {
     return (
       <Box
@@ -50,7 +67,7 @@ function ProductInfoCard({ product }) {
           </Box>
         </Box>
         <Divider />
-        {product.discount ? (
+        {product.discountedPrice ? (
           <Box mt={1} display="flex" justifyContent="space-between">
             <Box visibility="hidden">.</Box>
             <Box display="flex" alignItems="center">
@@ -59,7 +76,7 @@ function ProductInfoCard({ product }) {
                 pl={0.5}
                 display="flex"
                 justifyContent="end"
-                visibility={product.discount ? "visible" : "hidden"}
+                visibility={product.discountedPrice ? "visible" : "hidden"}
               >
                 <Typography
                   sx={{
@@ -70,9 +87,9 @@ function ProductInfoCard({ product }) {
                     // textDecorationSkipInk: "none",
                   }}
                   color="grey.500"
-                  variant="caption"
+                  variant="subtitle1"
                 >
-                  {product.price}
+                  {formatMoney(product.price)}
                 </Typography>
               </Box>
               <Box
@@ -81,26 +98,34 @@ function ProductInfoCard({ product }) {
                 alignItems="center"
                 bgcolor="red"
                 px={1}
-                display={product.discount ? "flex" : "none"}
+                display={product.discountedPrice ? "flex" : "none"}
               >
                 <Typography
                   sx={{ fontSize: "10px" }}
                   color="white"
                   variant="caption"
                 >
-                  {product.discount + "%"}
+                  {calDiscountPercent(product.price, product.discountedPrice)}
                 </Typography>
               </Box>
             </Box>
           </Box>
         ) : null}
-        <Box display="flex" alignItems="center" justifyContent="end" mb={1}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="end"
+          mb={1}
+          gap={0.5}
+        >
           <Typography
             sx={{ fontSize: "1.2rem" }}
-            variant="subtitle2"
+            variant="body2"
             component="span"
           >
-            {product.discount ? product.discountedPrice : product.price}
+            {product.discountedPrice
+              ? formatMoney(product.discountedPrice)
+              : formatMoney(product.price)}
           </Typography>
           <Typography sx={{ fontSize: "0.7rem" }} component="span">
             تومان
