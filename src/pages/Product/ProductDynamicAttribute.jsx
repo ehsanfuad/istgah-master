@@ -25,15 +25,6 @@ function ProductDynamicAttribute({ product, type }) {
     default:
       break;
   }
-  // if (attributes.length > 0) {
-  //   return type === "رنگ" ? (
-  //     <ProductColor attributes={attributes} type={type} />
-  //   ) : (
-  //     <ProductProperty attributes={attributes} type={type} />
-  //   );
-  // } else {
-  //   return null;
-  // }
 }
 
 export default ProductDynamicAttribute;

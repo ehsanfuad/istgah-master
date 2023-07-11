@@ -1,29 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Divider, Typography, Button, useMediaQuery } from "@mui/material";
 import { BiCoffeeTogo } from "react-icons/bi";
 import { FiTruck } from "react-icons/fi";
 import { theme } from "../../Theme";
-import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
-import { useSelector } from "react-redux";
+import {
+  calDiscountPercent,
+  formatMoney,
+  GetProductType,
+} from "../../hooks/numberUtils";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../store/cartReducer";
 
 function ProductInfoCard({ product }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
-  console.log(product);
-  // const color = useSelector((state) => state.cart.color);
-  // const weight = useSelector((state) => state.cart.weight);
-  // const grind = useSelector((state) => state.cart.grind);
-  // const add = (product) => {
-  //   dispatch(
-  //     addToCart({
-  //       id: product.id,
-  //       name: product.name,
-  //       description: product.description,
-  //       image: process.env.REACT_APP_UPLOAD_URL + product.image,
-  //       price: color.price ? color.price : product.price,
-  //       color: color,
-  //     })
-  //   );
-  // };
+  let dynamicType = GetProductType(product.product_types);
+
+  const dispatch = useDispatch();
+  const grind = useSelector((state) => state.cart.grind);
+  const color = useSelector((state) => state.cart.color);
+  const weight = useSelector((state) => state.cart.weight);
+  const [currentProduct, setCurrentProduct] = useState({});
+  const products = useSelector((state) => state.cart.products);
+
+  const addProduct = (product) => {
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.name,
+        image: process.env.REACT_APP_UPLOAD_URL + product.image,
+        price: dynamicType?.price ? dynamicType?.price : product.price,
+        discountedPrice: dynamicType?.discountedPrice
+          ? dynamicType?.discountedPrice
+          : product.discountedPrice,
+        color: color,
+        grind: grind,
+        weight: weight,
+      })
+    );
+  };
   const ForDesktop = () => {
     return (
       <Box
@@ -67,7 +81,7 @@ function ProductInfoCard({ product }) {
           </Box>
         </Box>
         <Divider />
-        {product.discountedPrice ? (
+        {dynamicType.discountedPrice || product.discountedPrice ? (
           <Box mt={1} display="flex" justifyContent="space-between">
             <Box visibility="hidden">.</Box>
             <Box display="flex" alignItems="center">
@@ -76,7 +90,11 @@ function ProductInfoCard({ product }) {
                 pl={0.5}
                 display="flex"
                 justifyContent="end"
-                visibility={product.discountedPrice ? "visible" : "hidden"}
+                visibility={
+                  dynamicType.discountedPrice || product.discountedPrice
+                    ? "visible"
+                    : "hidden"
+                }
               >
                 <Typography
                   sx={{
@@ -89,7 +107,9 @@ function ProductInfoCard({ product }) {
                   color="grey.500"
                   variant="subtitle1"
                 >
-                  {formatMoney(product.price)}
+                  {formatMoney(
+                    dynamicType.price ? dynamicType.price : product.price
+                  )}
                 </Typography>
               </Box>
               <Box
@@ -98,14 +118,23 @@ function ProductInfoCard({ product }) {
                 alignItems="center"
                 bgcolor="red"
                 px={1}
-                display={product.discountedPrice ? "flex" : "none"}
+                display={
+                  dynamicType.discountedPrice || product.discountedPrice
+                    ? "flex"
+                    : "none"
+                }
               >
                 <Typography
                   sx={{ fontSize: "10px" }}
                   color="white"
                   variant="caption"
                 >
-                  {calDiscountPercent(product.price, product.discountedPrice)}
+                  {calDiscountPercent(
+                    dynamicType.price ? dynamicType.price : product.price,
+                    dynamicType.discountedPrice
+                      ? dynamicType.discountedPrice
+                      : product.discountedPrice
+                  )}
                 </Typography>
               </Box>
             </Box>
@@ -123,15 +152,23 @@ function ProductInfoCard({ product }) {
             variant="body2"
             component="span"
           >
-            {product.discountedPrice
-              ? formatMoney(product.discountedPrice)
-              : formatMoney(product.price)}
+            {dynamicType.discountedPrice || product.discountedPrice
+              ? formatMoney(
+                  dynamicType.discountedPrice
+                    ? dynamicType.discountedPrice
+                    : product.discountedPrice
+                )
+              : formatMoney(
+                  dynamicType.price ? dynamicType.price : product.price
+                )}
           </Typography>
           <Typography sx={{ fontSize: "0.7rem" }} component="span">
             تومان
           </Typography>
         </Box>
-        <Button variant="contained">افزودن به سبد</Button>
+        <Button variant="contained" onClick={() => addProduct(product)}>
+          افزودن به سبد
+        </Button>
       </Box>
     );
   };

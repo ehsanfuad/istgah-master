@@ -14,10 +14,10 @@ const cartSlice = createSlice({
     addToCart: (cart, action) => {
       const product = cart.products.find(
         (product) =>
-          product.id === action.payload.id &&
-          product.color.id === action.payload.color.id &&
-          product.grind.id === action.payload.grind.id &&
-          product.weight.id === action.payload.weight.id
+          product?.id === action.payload?.id &&
+          product?.color?.id === action.payload?.color?.id &&
+          product?.grind?.id === action.payload?.grind?.id &&
+          product?.weight?.id === action.payload?.weight?.id
       );
       if (product) {
         //yani ghablan to cart bude baiad tedadesh ziad she
@@ -76,7 +76,7 @@ const cartSlice = createSlice({
 });
 
 export const {
-  addItem,
+  addToCart,
   removeItem,
   clearCart,
   incrementQuantity,
