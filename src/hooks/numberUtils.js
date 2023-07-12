@@ -8,7 +8,7 @@ export function calDiscountPercent(price, discountedPrice) {
   }
 }
 export function formatMoney(number) {
-  const formattedNumber = number.toLocaleString("fa-IR", {
+  const formattedNumber = number?.toLocaleString("fa-IR", {
     useGrouping: true,
     minimumFractionDigits: 0,
   });
@@ -17,7 +17,7 @@ export function formatMoney(number) {
 }
 
 export function formatNumber(number) {
-  return number.toLocaleString("fa-IR");
+  return number?.toLocaleString("fa-IR");
 }
 
 export function GetProductType(product_types) {
@@ -37,3 +37,11 @@ export function GetProductType(product_types) {
 
   return dynamicType;
 }
+
+export const getCartQuantity = (products) => {
+  var quantity = 0;
+  products.forEach((product) => {
+    quantity += product.quantity;
+  });
+  return quantity;
+};

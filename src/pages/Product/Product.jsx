@@ -56,7 +56,7 @@ function Product() {
                     <ProductFeatures features={product.features} />
                   </Box>
                 </Box>
-                <ProductInfoCard product={product} />
+                <ProductInfoCard product={product} productId={productId} />
               </Box>
             </Box>
           </Box>

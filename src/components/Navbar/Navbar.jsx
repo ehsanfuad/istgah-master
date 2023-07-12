@@ -35,6 +35,8 @@ import SideMenu from "../SideMenu/SideMenu";
 import Cart from "../Cart/Cart";
 import { FiShoppingCart } from "react-icons/fi";
 import Search from "../Search/Search";
+import { useSelector } from "react-redux";
+import { getCartQuantity } from "../../hooks/numberUtils";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -90,6 +92,7 @@ function Navbar() {
       setIsShowCart(true);
     }
   }, [location.pathname]);
+  const products = useSelector((state) => state.cart.products);
 
   if (loading) return "Loading";
   const categories = res;
@@ -220,7 +223,7 @@ function Navbar() {
                       onMouseLeave={handleCartClose}
                     >
                       <Badge
-                        badgeContent={1}
+                        badgeContent={getCartQuantity(products)}
                         color="primary"
                         anchorOrigin={{
                           vertical: "bottom",

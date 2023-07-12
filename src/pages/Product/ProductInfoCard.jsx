@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Divider, Typography, Button, useMediaQuery } from "@mui/material";
 import { BiCoffeeTogo } from "react-icons/bi";
 import { FiTruck } from "react-icons/fi";
@@ -10,17 +10,28 @@ import {
 } from "../../hooks/numberUtils";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../store/cartReducer";
+import CounterCart from "../../components/Cart/CounterCart";
 
-function ProductInfoCard({ product }) {
+function ProductInfoCard({ product, productId }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   let dynamicType = GetProductType(product.product_types);
-
   const dispatch = useDispatch();
   const grind = useSelector((state) => state.cart.grind);
   const color = useSelector((state) => state.cart.color);
   const weight = useSelector((state) => state.cart.weight);
-  const [currentProduct, setCurrentProduct] = useState({});
+  const [currentProduct, setCurrentProduct] = useState(null);
   const products = useSelector((state) => state.cart.products);
+
+  useEffect(() => {
+    const findProduct = products.find(
+      (item) =>
+        item?.id == productId &&
+        item?.color?.id == color?.id &&
+        item?.grind?.id == grind?.id &&
+        item?.weight?.id == weight?.id
+    );
+    setCurrentProduct(findProduct);
+  }, [products, color, weight, grind]);
 
   const addProduct = (product) => {
     dispatch(
@@ -28,10 +39,10 @@ function ProductInfoCard({ product }) {
         id: product.id,
         name: product.name,
         image: process.env.REACT_APP_UPLOAD_URL + product.image,
-        price: dynamicType?.price ? dynamicType?.price : product.price,
+        price: dynamicType?.price ? dynamicType?.price : product?.price,
         discountedPrice: dynamicType?.discountedPrice
           ? dynamicType?.discountedPrice
-          : product.discountedPrice,
+          : product?.discountedPrice,
         color: color,
         grind: grind,
         weight: weight,
@@ -81,7 +92,7 @@ function ProductInfoCard({ product }) {
           </Box>
         </Box>
         <Divider />
-        {dynamicType.discountedPrice || product.discountedPrice ? (
+        {dynamicType?.discountedPrice || product?.discountedPrice ? (
           <Box mt={1} display="flex" justifyContent="space-between">
             <Box visibility="hidden">.</Box>
             <Box display="flex" alignItems="center">
@@ -91,7 +102,7 @@ function ProductInfoCard({ product }) {
                 display="flex"
                 justifyContent="end"
                 visibility={
-                  dynamicType.discountedPrice || product.discountedPrice
+                  dynamicType?.discountedPrice || product?.discountedPrice
                     ? "visible"
                     : "hidden"
                 }
@@ -108,7 +119,7 @@ function ProductInfoCard({ product }) {
                   variant="subtitle1"
                 >
                   {formatMoney(
-                    dynamicType.price ? dynamicType.price : product.price
+                    dynamicType?.price ? dynamicType?.price : product?.price
                   )}
                 </Typography>
               </Box>
@@ -119,7 +130,7 @@ function ProductInfoCard({ product }) {
                 bgcolor="red"
                 px={1}
                 display={
-                  dynamicType.discountedPrice || product.discountedPrice
+                  dynamicType?.discountedPrice || product?.discountedPrice
                     ? "flex"
                     : "none"
                 }
@@ -130,10 +141,10 @@ function ProductInfoCard({ product }) {
                   variant="caption"
                 >
                   {calDiscountPercent(
-                    dynamicType.price ? dynamicType.price : product.price,
-                    dynamicType.discountedPrice
-                      ? dynamicType.discountedPrice
-                      : product.discountedPrice
+                    dynamicType?.price ? dynamicType?.price : product?.price,
+                    dynamicType?.discountedPrice
+                      ? dynamicType?.discountedPrice
+                      : product?.discountedPrice
                   )}
                 </Typography>
               </Box>
@@ -152,23 +163,32 @@ function ProductInfoCard({ product }) {
             variant="body2"
             component="span"
           >
-            {dynamicType.discountedPrice || product.discountedPrice
+            {dynamicType?.discountedPrice || product?.discountedPrice
               ? formatMoney(
-                  dynamicType.discountedPrice
-                    ? dynamicType.discountedPrice
-                    : product.discountedPrice
+                  dynamicType?.discountedPrice
+                    ? dynamicType?.discountedPrice
+                    : product?.discountedPrice
                 )
               : formatMoney(
-                  dynamicType.price ? dynamicType.price : product.price
+                  dynamicType?.price ? dynamicType?.price : product?.price
                 )}
           </Typography>
           <Typography sx={{ fontSize: "0.7rem" }} component="span">
             تومان
           </Typography>
         </Box>
-        <Button variant="contained" onClick={() => addProduct(product)}>
-          افزودن به سبد
-        </Button>
+        {currentProduct?.quantity >= 1 ? (
+          <Box px={6}>
+            <CounterCart
+              quantity={currentProduct?.quantity}
+              product={currentProduct}
+            />
+          </Box>
+        ) : (
+          <Button variant="contained" onClick={() => addProduct(product)}>
+            افزودن به سبد
+          </Button>
+        )}
       </Box>
     );
   };

@@ -16,12 +16,16 @@ function ProductCard({ product, border }) {
       borderColor={theme.palette.grey[300]}
     >
       <Box maxWidth="116px" flex={1} display="flex" flexDirection="column">
-        <img src={product.imgUrl} width="100%" alt={product.title} />
-        <CounterCart />
+        <img
+          src="https://www.technolife.ir/image/gallery-1-TLP-4993_5024bc63-9f0a-47d8-9d2b-fd555eacc08e.webp"
+          width="100%"
+          alt={product.name}
+        />
+        <CounterCart product={product} />
       </Box>
       <Box flex={2} display="flex" flexDirection="column" gap={1}>
         <Typography className="noselect" fontSize="0.9rem" lineHeight={2}>
-          {product.title}
+          {product.name}
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
           <Box

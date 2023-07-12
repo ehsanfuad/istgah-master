@@ -5,6 +5,7 @@ const initialState = {
   color: {},
   weight: {},
   grind: {},
+  cartQuantity: null,
 };
 
 const cartSlice = createSlice({
@@ -30,22 +31,24 @@ const cartSlice = createSlice({
     incrementQuantity: (cart, action) => {
       const product = cart.products.find(
         (product) =>
-          product.id === action.payload.id &&
-          product.color.name === action.payload.color.name &&
-          product.grind.name === action.payload.grind.name &&
-          product.weight.name === action.payload.weight.name
+          product?.id === action.payload?.id &&
+          product?.color?.id === action.payload?.color?.id &&
+          product?.grind?.id === action.payload?.grind?.id &&
+          product?.weight?.id === action.payload?.weight?.id
       );
-      product.quantity++;
+      if (product) {
+        product.quantity++;
+      }
     },
     decrementQuantity: (cart, action) => {
       const product = cart.products.find(
         (product) =>
-          product.id === action.payload.id &&
-          product.color.name === action.payload.color.name &&
-          product.grind.name === action.payload.grind.name &&
-          product.weight.name === action.payload.weight.name
+          product?.id === action.payload?.id &&
+          product?.color?.id === action.payload?.color?.id &&
+          product?.grind?.id === action.payload?.grind?.id &&
+          product?.weight?.id === action.payload?.weight?.id
       );
-      if (product.quantity === 0) {
+      if (product.quantity == 0) {
         product.quantity = 0;
       } else {
         product.quantity--;
@@ -54,10 +57,10 @@ const cartSlice = createSlice({
     removeItem: (cart, action) => {
       cart.products = cart.products.filter(
         (product) =>
-          product.id !== action.payload.id &&
-          product.color.name !== action.payload.color.name &&
-          product.grind.name !== action.payload.grind.name &&
-          product.weight.name !== action.payload.weight.name
+          product?.id == action.payload?.id &&
+          product?.color?.id == action.payload?.color?.id &&
+          product?.grind?.id == action.payload?.grind?.id &&
+          product?.weight?.id == action.payload?.weight?.id
       );
     },
     clearCart: (cart) => {
