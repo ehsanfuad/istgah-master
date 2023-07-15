@@ -1,11 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
   products: [],
   color: {},
   weight: {},
   grind: {},
-  cartQuantity: null,
 };
 
 const cartSlice = createSlice({
@@ -48,20 +47,24 @@ const cartSlice = createSlice({
           product?.grind?.id === action.payload?.grind?.id &&
           product?.weight?.id === action.payload?.weight?.id
       );
-      if (product.quantity == 0) {
+      if (product.quantity === 0) {
         product.quantity = 0;
       } else {
         product.quantity--;
       }
     },
     removeItem: (cart, action) => {
-      cart.products = cart.products.filter(
-        (product) =>
-          product?.id == action.payload?.id &&
-          product?.color?.id == action.payload?.color?.id &&
-          product?.grind?.id == action.payload?.grind?.id &&
-          product?.weight?.id == action.payload?.weight?.id
+      const { productId, colorId, grindId, weightId } = action.payload;
+      const filtereds = cart.products.filter(
+        (item) =>
+          !(
+            item?.id === productId &&
+            item?.grind?.id === grindId &&
+            item?.weight?.id === weightId &&
+            item?.color?.id === colorId
+          )
       );
+      cart.products = filtereds;
     },
     clearCart: (cart) => {
       cart.products = [];

@@ -11,7 +11,7 @@ import { getCartQuantity } from "../../hooks/numberUtils";
 
 function Cart({ setCartAnchorEl, cartAnchorEl, eventCart, isShowCart }) {
   const open = Boolean(cartAnchorEl);
-  const id = open ? "simple-popover" : undefined;
+
   const products = useSelector((state) => state.cart.products);
   const productNumber = getCartQuantity(products);
   const handleCartClose = () => {
@@ -34,7 +34,6 @@ function Cart({ setCartAnchorEl, cartAnchorEl, eventCart, isShowCart }) {
   const CartContent = () => {
     return (
       <Popover
-        id={id}
         open={open}
         anchorEl={cartAnchorEl}
         onClose={handleCartClose}

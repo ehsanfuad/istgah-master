@@ -2,8 +2,11 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 import CounterCart from "./CounterCart";
 import { theme } from "../../Theme";
+import { formatNumber } from "../../hooks/numberUtils";
+import DynamicPropCart from "./DynamicPropCart";
 
 function ProductCard({ product, border }) {
+  console.log(product);
   return (
     <Box
       display="flex"
@@ -27,22 +30,24 @@ function ProductCard({ product, border }) {
         <Typography className="noselect" fontSize="0.9rem" lineHeight={2}>
           {product.name}
         </Typography>
-        <Box display="flex" alignItems="center" gap={1}>
-          <Box
-            borderRadius={5}
-            bgcolor="magenta"
-            width="15px"
-            height="15px"
-          ></Box>
-          <Typography variant="subtitle2">صورتی</Typography>
-        </Box>
+        <DynamicPropCart name="وزن:" property={product.weight} id="weight" />
+        <DynamicPropCart name="آسیاب:" property={product.grind} id="grind" />
+        <DynamicPropCart name="رنگ:" property={product.color} id="color" />
+        {product.discountedPrice ? (
+          <Box>
+            <Typography fontSize="0.7rem" variant="subtitle2" color="red">
+              {formatNumber(product.price - product.discountedPrice)} تومان
+              تخفیف
+            </Typography>
+          </Box>
+        ) : null}
         <Box>
-          <Typography fontSize="0.7rem" variant="subtitle2" color="red">
-            ۴۷,۰۰۰ تومان تخفیف
+          <Typography variant="body1">
+            {formatNumber(
+              product.discountedPrice ? product.discountedPrice : product.price
+            )}{" "}
+            تومان
           </Typography>
-        </Box>
-        <Box>
-          <Typography variant="body1">32,000,000 تومان</Typography>
         </Box>
       </Box>
     </Box>

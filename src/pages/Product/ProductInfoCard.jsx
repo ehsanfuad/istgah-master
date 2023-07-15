@@ -179,10 +179,7 @@ function ProductInfoCard({ product, productId }) {
         </Box>
         {currentProduct?.quantity >= 1 ? (
           <Box px={6}>
-            <CounterCart
-              quantity={currentProduct?.quantity}
-              product={currentProduct}
-            />
+            <CounterCart product={currentProduct} />
           </Box>
         ) : (
           <Button variant="contained" onClick={() => addProduct(product)}>

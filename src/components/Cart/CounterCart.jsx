@@ -3,21 +3,36 @@ import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { theme } from "../../Theme";
 import { FaPlus, FaMinus, FaTrashAlt } from "react-icons/fa";
-import { decrementQuantity, incrementQuantity } from "../../store/cartReducer";
+import {
+  decrementQuantity,
+  incrementQuantity,
+  removeItem,
+} from "../../store/cartReducer";
 import { useDispatch } from "react-redux";
 
 function CounterCart({ product }) {
   const dispatch = useDispatch();
   const [counter, setCounter] = useState(product.quantity);
   const handleDecrease = (product) => {
-    dispatch(
-      decrementQuantity({
-        id: product.id,
-        color: product.color,
-        grind: product.grind,
-        weight: product.weight,
-      })
-    );
+    if (counter > 1) {
+      dispatch(
+        decrementQuantity({
+          id: product.id,
+          color: product.color,
+          grind: product.grind,
+          weight: product.weight,
+        })
+      );
+    } else {
+      dispatch(
+        removeItem({
+          productId: product.id,
+          colorId: product?.color?.id,
+          grindId: product?.grind?.id,
+          weightId: product?.weight?.id,
+        })
+      );
+    }
   };
   const handleIncrease = (product) => {
     dispatch(
