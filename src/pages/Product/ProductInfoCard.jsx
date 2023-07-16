@@ -178,7 +178,7 @@ function ProductInfoCard({ product, productId }) {
           </Typography>
         </Box>
         {currentProduct?.quantity >= 1 ? (
-          <Box px={6}>
+          <Box px={2}>
             <CounterCart product={currentProduct} />
           </Box>
         ) : (

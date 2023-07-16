@@ -4,11 +4,13 @@ import {
   Typography,
   Button,
   useMediaQuery,
+  Link,
 } from "@mui/material";
 import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../Theme";
 
-function CartPrice({ itemNumber }) {
+function CartPrice({ itemNumber, rawPrice, discountedPrice, cartPrice }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
     <Container maxWidth="xl">
@@ -28,7 +30,7 @@ function CartPrice({ itemNumber }) {
             {`قیمت کالا ها (${itemNumber})`}
           </Typography>
           <Typography variant="subtitle1" fontSize="0.8rem">
-            1000000 تومان
+            {rawPrice} تومان
           </Typography>
         </Box>
         <Box display="flex" flexDirection="row" justifyContent="space-between">
@@ -36,12 +38,12 @@ function CartPrice({ itemNumber }) {
             جمع سبد خرید
           </Typography>
           <Typography variant="subtitle1" fontSize="0.8rem">
-            2000000 تومان
+            {cartPrice} تومان
           </Typography>
         </Box>
         <Box
           color="red"
-          display="flex"
+          display={discountedPrice ? "flex" : "none"}
           flexDirection="row"
           justifyContent="space-between"
         >
@@ -49,7 +51,7 @@ function CartPrice({ itemNumber }) {
             جمع تخفیف
           </Typography>
           <Typography variant="subtitle1" fontSize="0.8rem">
-            3000000 تومان
+            {discountedPrice} تومان
           </Typography>
         </Box>
         <Box
@@ -57,13 +59,15 @@ function CartPrice({ itemNumber }) {
           flexDirection="row"
           justifyContent="center"
         >
-          <Button
-            variant="contained"
-            size="large"
-            sx={{ paddingX: "5rem", marginBottom: "1rem", width: "100%" }}
-          >
-            ثبت سفارش
-          </Button>
+          <Link to="/checkout" component={RouterLink} underline="none">
+            <Button
+              variant="contained"
+              size="large"
+              sx={{ paddingX: "5rem", marginBottom: "1rem", width: "100%" }}
+            >
+              ثبت سفارش
+            </Button>
+          </Link>
         </Box>
       </Box>
     </Container>

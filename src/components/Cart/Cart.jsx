@@ -7,13 +7,19 @@ import { FiChevronLeft } from "react-icons/fi";
 import "./Cart.scss";
 import ProductCard from "./ProductCard";
 import { useSelector } from "react-redux";
-import { getCartQuantity } from "../../hooks/numberUtils";
+import {
+  formatMoney,
+  getCartPrice,
+  getCartQuantity,
+} from "../../hooks/numberUtils";
 
 function Cart({ setCartAnchorEl, cartAnchorEl, eventCart, isShowCart }) {
   const open = Boolean(cartAnchorEl);
 
   const products = useSelector((state) => state.cart.products);
   const productNumber = getCartQuantity(products);
+  const cartPrice = getCartPrice(products);
+
   const handleCartClose = () => {
     setCartAnchorEl(null);
   };
@@ -94,7 +100,10 @@ function Cart({ setCartAnchorEl, cartAnchorEl, eventCart, isShowCart }) {
               <Typography color={theme.palette.grey[600]} variant="subtitle2">
                 مبلغ قابل پرداخت
               </Typography>
-              <Typography fontSize={"1.25rem"}> ۱۳،۸۰۰،۰۰۰ تومان</Typography>
+              <Typography fontSize={"1.25rem"}>
+                {" "}
+                {formatMoney(cartPrice)} تومان
+              </Typography>
             </Box>
             <Button
               sx={{ paddingY: "0.7rem" }}

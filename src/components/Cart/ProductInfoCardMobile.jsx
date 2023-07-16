@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, useMediaQuery, Typography } from "@mui/material";
 import { theme } from "../../Theme";
 
-function ProductInfoCardMobile({ product }) {
+function ProductInfoCardMobile({ cartPrice }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   if (mobileVersion) {
     return (
@@ -55,7 +55,7 @@ function ProductInfoCardMobile({ product }) {
               mb={1}
             >
               <Typography variant="subtitle1" component="span">
-                ۴۰,۳۰۰
+                {cartPrice}
               </Typography>
               <Typography sx={{ fontSize: "0.7rem" }} component="span">
                 تومان

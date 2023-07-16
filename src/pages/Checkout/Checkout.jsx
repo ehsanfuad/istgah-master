@@ -17,6 +17,14 @@ import CheckoutPriceMobile from "./components/CheckoutPriceMobile";
 import AddressCard from "./components/AddressCard";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import useDraggableContainer from "../../hooks/useDraggableContainer ";
+import { useSelector } from "react-redux";
+import {
+  formatMoney,
+  formatNumber,
+  getCartPrice,
+  getCartQuantity,
+  getRawCartPrice,
+} from "../../hooks/numberUtils";
 
 function Checkout() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -27,95 +35,97 @@ function Checkout() {
   const handleOnClickCode = () => {
     setShowCode(true);
   };
-  const orders = [
-    {
-      id: 1235,
-      date: "20 اردیبهشت 1402",
-      price: "20,000",
-      refId: 123513513,
-      products: [
-        {
-          id: 1,
-          specialSale: true,
-          imgUrl:
-            "https://dkstatics-public.digikala.com/digikala-products/fa5961b7d2a4efb180d686f6f69dd45381a4d3dd_1649056488.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-          title:
-            "گوشی موبایل اپل مدل iPhone 13 Pro Max A2644 دو سیم‌ کارت ظرفیت 256 گیگابایت و رم 6 گیگابایت",
-          stockNumber: 3,
-          rate: "۴.۳",
-          price: "۵۰,۰۰۰,۰۰۰",
-          discountedPrice: "۴۵,۰۰۰,۰۰۰",
-          discount: 3,
-          category: 6,
-        },
-        {
-          id: 2,
-          specialSale: false,
-          imgUrl:
-            "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-          title: "قاب مدل سیلیکونی مناسب برای گوشی موبایل اپل iphone ۱۲ pro",
-          stockNumber: 10,
-          rate: "۴",
-          price: "۵۰,۰۰۰",
-          discountedPrice: "۴۵,۰۰۰,۰۰۰",
-          discount: null,
-          category: 9,
-        },
-        {
-          id: 3,
-          specialSale: false,
-          imgUrl:
-            "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-          title: "قاب صورتی",
-          stockNumber: 10,
-          rate: "۴",
-          price: "۵۰,۰۰۰",
-          discountedPrice: "۴۵,۰۰۰,۰۰۰",
-          discount: null,
-          category: 12,
-        },
-        {
-          id: 3,
-          specialSale: false,
-          imgUrl:
-            "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-          title: "قاب صورتی",
-          stockNumber: 10,
-          rate: "۴",
-          price: "۵۰,۰۰۰",
-          discountedPrice: "۴۵,۰۰۰,۰۰۰",
-          discount: null,
-          category: 12,
-        },
-        {
-          id: 3,
-          specialSale: false,
-          imgUrl:
-            "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-          title: "قاب صورتی",
-          stockNumber: 10,
-          rate: "۴",
-          price: "۵۰,۰۰۰",
-          discountedPrice: "۴۵,۰۰۰,۰۰۰",
-          discount: null,
-          category: 12,
-        },
-        {
-          id: 3,
-          specialSale: false,
-          imgUrl:
-            "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-          title: "قاب صورتی",
-          stockNumber: 10,
-          rate: "۴",
-          price: "۵۰,۰۰۰",
-          discountedPrice: "۴۵,۰۰۰,۰۰۰",
-          discount: null,
-          category: 12,
-        },
-      ],
-    },
-  ];
+  const products = useSelector((state) => state.cart.products);
+
+  // const orders = [
+  //   {
+  //     id: 1235,
+  //     date: "20 اردیبهشت 1402",
+  //     price: "20,000",
+  //     refId: 123513513,
+  //     products: [
+  //       {
+  //         id: 1,
+  //         specialSale: true,
+  //         imgUrl:
+  //           "https://dkstatics-public.digikala.com/digikala-products/fa5961b7d2a4efb180d686f6f69dd45381a4d3dd_1649056488.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
+  //         title:
+  //           "گوشی موبایل اپل مدل iPhone 13 Pro Max A2644 دو سیم‌ کارت ظرفیت 256 گیگابایت و رم 6 گیگابایت",
+  //         stockNumber: 3,
+  //         rate: "۴.۳",
+  //         price: "۵۰,۰۰۰,۰۰۰",
+  //         discountedPrice: "۴۵,۰۰۰,۰۰۰",
+  //         discount: 3,
+  //         category: 6,
+  //       },
+  //       {
+  //         id: 2,
+  //         specialSale: false,
+  //         imgUrl:
+  //           "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
+  //         title: "قاب مدل سیلیکونی مناسب برای گوشی موبایل اپل iphone ۱۲ pro",
+  //         stockNumber: 10,
+  //         rate: "۴",
+  //         price: "۵۰,۰۰۰",
+  //         discountedPrice: "۴۵,۰۰۰,۰۰۰",
+  //         discount: null,
+  //         category: 9,
+  //       },
+  //       {
+  //         id: 3,
+  //         specialSale: false,
+  //         imgUrl:
+  //           "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
+  //         title: "قاب صورتی",
+  //         stockNumber: 10,
+  //         rate: "۴",
+  //         price: "۵۰,۰۰۰",
+  //         discountedPrice: "۴۵,۰۰۰,۰۰۰",
+  //         discount: null,
+  //         category: 12,
+  //       },
+  //       {
+  //         id: 3,
+  //         specialSale: false,
+  //         imgUrl:
+  //           "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
+  //         title: "قاب صورتی",
+  //         stockNumber: 10,
+  //         rate: "۴",
+  //         price: "۵۰,۰۰۰",
+  //         discountedPrice: "۴۵,۰۰۰,۰۰۰",
+  //         discount: null,
+  //         category: 12,
+  //       },
+  //       {
+  //         id: 3,
+  //         specialSale: false,
+  //         imgUrl:
+  //           "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
+  //         title: "قاب صورتی",
+  //         stockNumber: 10,
+  //         rate: "۴",
+  //         price: "۵۰,۰۰۰",
+  //         discountedPrice: "۴۵,۰۰۰,۰۰۰",
+  //         discount: null,
+  //         category: 12,
+  //       },
+  //       {
+  //         id: 3,
+  //         specialSale: false,
+  //         imgUrl:
+  //           "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
+  //         title: "قاب صورتی",
+  //         stockNumber: 10,
+  //         rate: "۴",
+  //         price: "۵۰,۰۰۰",
+  //         discountedPrice: "۴۵,۰۰۰,۰۰۰",
+  //         discount: null,
+  //         category: 12,
+  //       },
+  //     ],
+  //   },
+  // ];
   return (
     <>
       <Container maxWidth="xl">
@@ -250,7 +260,9 @@ function Checkout() {
                     bgcolor={theme.palette.grey[200]}
                     borderRadius={3}
                   >
-                    <Typography fontSize="0.7rem">2 کالا</Typography>
+                    <Typography fontSize="0.7rem">
+                      {formatNumber(getCartQuantity(products))} کالا
+                    </Typography>
                   </Box>
                 </Box>
                 <Typography fontSize="0.7rem" variant="subtitle1">
@@ -265,7 +277,7 @@ function Checkout() {
                     style={{ paddingBottom: "1rem" }}
                   >
                     <div className="scroll-wrapper">
-                      {orders[0].products.map((product, index) => (
+                      {products.map((product, index) => (
                         <Box
                           maxWidth="116px"
                           flex={1}
@@ -273,7 +285,10 @@ function Checkout() {
                           flexDirection="column"
                           position="relative"
                         >
-                          <img src={product.imgUrl} width="100px" />
+                          <img
+                            src="https://www.technolife.ir/image/gallery-1-TLP-4993_5024bc63-9f0a-47d8-9d2b-fd555eacc08e.webp"
+                            width="100px"
+                          />
                           <Box
                             bottom="0"
                             left="0"
@@ -286,7 +301,9 @@ function Checkout() {
                             justifyContent="center"
                             sx={{ backgroundColor: "rgb(211,211,211,0.5)" }}
                           >
-                            {1}
+                            <Typography variant="body2">
+                              {formatNumber(product.quantity)}
+                            </Typography>
                           </Box>
                         </Box>
                       ))}
@@ -306,7 +323,11 @@ function Checkout() {
               top={10}
               height="fit-content"
             >
-              <CheckoutPrice itemNumber={3} />
+              <CheckoutPrice
+                itemNumber={formatNumber(getCartQuantity(products))}
+                rawPrice={getRawCartPrice(products)}
+                cartPrice={formatMoney(getCartPrice(products))}
+              />
             </Box>
           </Box>
         </Box>

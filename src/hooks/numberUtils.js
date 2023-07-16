@@ -45,3 +45,38 @@ export const getCartQuantity = (products) => {
   });
   return quantity;
 };
+
+export const getCartPrice = (products) => {
+  let price = 0;
+  products.forEach((product) => {
+    let p = product.discountedPrice ? product.discountedPrice : product.price;
+    price += p * product.quantity;
+  });
+  return price;
+};
+
+export const getRawCartPrice = (products) => {
+  let price = 0;
+  products.forEach((product) => {
+    price += product.price * product.quantity;
+  });
+  return formatMoney(price);
+};
+export const getDiscountedCart = (products) => {
+  let price = 0;
+  products.forEach((product) => {
+    if (product.discountedPrice) {
+      price += product.discountedPrice * product.quantity;
+    }
+  });
+  return price > 0 ? formatMoney(price) : null;
+};
+export function showPrice(dynamicType, product) {
+  return dynamicType?.discountedPrice || product?.discountedPrice
+    ? formatMoney(
+        dynamicType?.discountedPrice
+          ? dynamicType?.discountedPrice
+          : product?.discountedPrice
+      )
+    : formatMoney(dynamicType?.price ? dynamicType?.price : product?.price);
+}

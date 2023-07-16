@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, useMediaQuery, Typography } from "@mui/material";
 import { theme } from "../../Theme";
-import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
+import {
+  GetProductType,
+  calDiscountPercent,
+  formatMoney,
+  showPrice,
+} from "../../hooks/numberUtils";
+import { useDispatch, useSelector } from "react-redux";
+import CounterCart from "../../components/Cart/CounterCart";
+import { addToCart } from "../../store/cartReducer";
 
 // function formatMoney(number) {
 //   const formattedNumber = number.toLocaleString("fa-IR", {
@@ -10,8 +18,45 @@ import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
 //   });
 //   return formattedNumber;
 // }
-function ProductInfoCardMobile({ product }) {
+function ProductInfoCardMobile({ product, productId }) {
+  let dynamicType = GetProductType(product.product_types);
+  const dispatch = useDispatch();
+  const grind = useSelector((state) => state.cart.grind);
+  const color = useSelector((state) => state.cart.color);
+  const weight = useSelector((state) => state.cart.weight);
+  const [currentProduct, setCurrentProduct] = useState(null);
+  const products = useSelector((state) => state.cart.products);
+
+  useEffect(() => {
+    const findProduct = products.find(
+      (item) =>
+        item?.id == productId &&
+        item?.color?.id == color?.id &&
+        item?.grind?.id == grind?.id &&
+        item?.weight?.id == weight?.id
+    );
+    setCurrentProduct(findProduct);
+  }, [products, color, weight, grind]);
+
+  const addProduct = (product) => {
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.name,
+        image: process.env.REACT_APP_UPLOAD_URL + product.image,
+        price: dynamicType?.price ? dynamicType?.price : product?.price,
+        discountedPrice: dynamicType?.discountedPrice
+          ? dynamicType?.discountedPrice
+          : product?.discountedPrice,
+        color: color,
+        grind: grind,
+        weight: weight,
+      })
+    );
+  };
+
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
+
   if (mobileVersion) {
     return (
       <Box
@@ -33,26 +78,37 @@ function ProductInfoCardMobile({ product }) {
           px={2}
           height="100%"
         >
-          <Button variant="contained">افزودن به سبد</Button>
+          {currentProduct?.quantity >= 1 ? (
+            <Box width="50%">
+              <CounterCart product={currentProduct} />
+            </Box>
+          ) : (
+            <Button variant="contained" onClick={() => addProduct(product)}>
+              افزودن به سبد
+            </Button>
+          )}
           <Box display="flex" flexDirection="column">
             <Box
               position="relative"
               pl={0.5}
               justifyContent="end"
-              display={product.discountedPrice ? "flex" : "none"}
+              display={
+                dynamicType?.discountedPrice || product?.discountedPrice
+                  ? "flex"
+                  : "none"
+              }
             >
               <Typography
                 sx={{
                   textDecoration: "line-through",
                   fontSize: "0.8rem",
-                  // textDecorationThickness: "2px",
-                  // textUnderlineOffset: "-.3em",
-                  // textDecorationSkipInk: "none",
                 }}
                 color="grey.500"
                 // variant="subtitle2"
               >
-                {formatMoney(product.price)}
+                {formatMoney(
+                  dynamicType?.price ? dynamicType?.price : product?.price
+                )}
               </Typography>
               <Box
                 sx={{ width: "fit-content" }}
@@ -61,14 +117,23 @@ function ProductInfoCardMobile({ product }) {
                 bgcolor="red"
                 px={1}
                 mr={0.5}
-                display={product.discountedPrice ? "flex" : "none"}
+                display={
+                  dynamicType?.discountedPrice || product?.discountedPrice
+                    ? "flex"
+                    : "none"
+                }
               >
                 <Typography
                   sx={{ fontSize: "10px" }}
                   color="white"
                   variant="caption"
                 >
-                  {calDiscountPercent(product.price, product.discountedPrice)}
+                  {calDiscountPercent(
+                    dynamicType?.price ? dynamicType?.price : product?.price,
+                    dynamicType?.discountedPrice
+                      ? dynamicType?.discountedPrice
+                      : product?.discountedPrice
+                  )}
                 </Typography>
               </Box>
             </Box>
@@ -84,9 +149,7 @@ function ProductInfoCardMobile({ product }) {
                 variant="body2"
                 component="span"
               >
-                {product.discountedPrice
-                  ? formatMoney(product.discountedPrice)
-                  : formatMoney(product.price)}
+                {showPrice(dynamicType, product)}
               </Typography>
               <Typography sx={{ fontSize: "0.7rem" }} component="span">
                 تومان

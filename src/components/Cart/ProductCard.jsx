@@ -6,7 +6,6 @@ import { formatNumber } from "../../hooks/numberUtils";
 import DynamicPropCart from "./DynamicPropCart";
 
 function ProductCard({ product, border }) {
-  console.log(product);
   return (
     <Box
       display="flex"

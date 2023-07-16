@@ -63,7 +63,7 @@ function Product() {
         </Box>
         <ProductComments description={product.description} />
       </Container>
-      <ProductInfoCardMobile product={product} />
+      <ProductInfoCardMobile product={product} productId={productId} />
     </Box>
   );
 }

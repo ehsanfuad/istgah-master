@@ -1,6 +1,6 @@
 import "./Cart.scss";
 import { Box, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "../../Theme";
 import { FaPlus, FaMinus, FaTrashAlt } from "react-icons/fa";
 import {
@@ -13,6 +13,9 @@ import { useDispatch } from "react-redux";
 function CounterCart({ product }) {
   const dispatch = useDispatch();
   const [counter, setCounter] = useState(product.quantity);
+  useEffect(() => {
+    setCounter(product.quantity);
+  }, [product]);
   const handleDecrease = (product) => {
     if (counter > 1) {
       dispatch(
