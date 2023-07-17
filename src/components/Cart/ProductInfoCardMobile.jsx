@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Button, useMediaQuery, Typography } from "@mui/material";
+import { Box, Button, useMediaQuery, Typography, Link } from "@mui/material";
 import { theme } from "../../Theme";
-
+import { Link as RouterLink } from "react-router-dom";
 function ProductInfoCardMobile({ cartPrice }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   if (mobileVersion) {
@@ -25,13 +25,15 @@ function ProductInfoCardMobile({ cartPrice }) {
           px={2}
           height="100%"
         >
-          <Button
-            variant="contained"
-            sx={{ paddingX: 6, paddingY: 1.3, borderRadius: 2 }}
-            size="large"
-          >
-            ثبت سفارش
-          </Button>
+          <Link to="/checkout" component={RouterLink} underline="none">
+            <Button
+              variant="contained"
+              sx={{ paddingX: 6, paddingY: 1.3, borderRadius: 2 }}
+              size="large"
+            >
+              ثبت سفارش
+            </Button>
+          </Link>
           <Box display="flex" flexDirection="column">
             <Box
               position="relative"

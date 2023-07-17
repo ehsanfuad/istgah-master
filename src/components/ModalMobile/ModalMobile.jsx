@@ -56,7 +56,7 @@ function ModalMobile({ open, setOpen, titleComponent, contentComponent }) {
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
         swipeAreaWidth={drawerBleeding}
-        disableSwipeToOpen={false}
+        disableSwipeToOpen={true}
         // ModalProps={{
         //   keepMounted: true,
         // }}
