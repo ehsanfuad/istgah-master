@@ -23,6 +23,8 @@ import WishList from "./pages/Profile/WishList";
 import OrderDetails from "./pages/Profile/Orders/components/OrderDetails";
 import PersonalInfo from "./pages/Profile/PersonalInfo/PersonalInfo";
 import Checkout from "./pages/Checkout/Checkout";
+import LoginRedirect from "./pages/LoginRedirect/LoginRedirect";
+import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
 const Layout = () => {
   return (
     <div className="app">
@@ -41,59 +43,88 @@ const ProfileLayout = () => {
   );
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/search/:category?/:id?",
-        element: <Search />,
-      },
-      {
-        path: "/product/:id?/:categoryId?",
-        element: <Product />,
-      },
-    ],
-  },
-  { path: "/login", element: <Login /> },
-  { path: "/cart", element: <Cart /> },
-  { path: "/checkout", element: <Checkout /> },
-  {
-    path: "profile",
-    element: <ProfileLayout />,
-    children: [
-      {
-        path: "",
-        element: <Profile />,
-      },
-      {
-        path: "personal-info",
-        element: <PersonalInfo />,
-      },
-      {
-        path: "orders",
-        element: <Orders />,
-      },
-      {
-        path: "orders/:id",
-        element: <OrderDetails />,
-      },
-      {
-        path: "addresses",
-        element: <Addresses />,
-      },
-      {
-        path: "wish-list",
-        element: <WishList />,
-      },
-    ],
-  },
-]);
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <Layout />,
+//     children: [
+//       {
+//         path: "/",
+//         element: <Home />,
+//       },
+//       {
+//         path: "/search/:category?/:id?",
+//         element: <Search />,
+//       },
+//       {
+//         path: "/product/:id?/:categoryId?",
+//         element: <Product />,
+//       },
+//     ],
+//   },
+//   { path: "/login", element: <Login /> },
+//   { path: "/cart", element: <Cart /> },
+//   { path: "/checkout", element: <Checkout /> },
+//   {
+//     path: "profile",
+//     element: <ProfileLayout />,
+//     children: [
+//       {
+//         path: "",
+//         element: <Profile />,
+//       },
+//       {
+//         path: "personal-info",
+//         element: <PersonalInfo />,
+//       },
+//       {
+//         path: "orders",
+//         element: <Orders />,
+//       },
+//       {
+//         path: "orders/:id",
+//         element: <OrderDetails />,
+//       },
+//       {
+//         path: "addresses",
+//         element: <Addresses />,
+//       },
+//       {
+//         path: "wish-list",
+//         element: <WishList />,
+//       },
+//     ],
+//   },
+// ]);
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="/search/:category?/:id?" element={<Search />} />
+        <Route path="/product/:id?/:categoryId?" element={<Product />} />
+      </Route>
+      <Route path="login" element={<Login />} />
+      <Route path="cart" element={<Cart />} />
+      <Route
+        path="/connect/:providerName/redirect"
+        element={<LoginRedirect />}
+      />
+      <Route element={<PrivateRoutes />}>
+        <Route path="checkout" element={<Checkout />} />
+        <Route path="profile" element={<ProfileLayout />}>
+          <Route path="" element={<Profile />} />
+          <Route path="personal-info" element={<PersonalInfo />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="orders/:id" element={<OrderDetails />} />
+          <Route path="addresses" element={<Addresses />} />
+          <Route path="wish-list" element={<WishList />} />
+        </Route>
+      </Route>
+    </>
+  )
+);
 function App() {
   return (
     <div className="app">

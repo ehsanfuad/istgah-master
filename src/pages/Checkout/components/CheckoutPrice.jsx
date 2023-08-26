@@ -69,7 +69,6 @@ function CheckoutPrice({ itemNumber, rawPrice, cartPrice, discountedPrice }) {
           {discountedPrice} تومان
         </Typography>
       </Box>
-      <Divider />
       <Box
         display="flex"
         flexDirection="row"

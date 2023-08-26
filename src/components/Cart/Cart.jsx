@@ -105,13 +105,15 @@ function Cart({ setCartAnchorEl, cartAnchorEl, eventCart, isShowCart }) {
                 {formatMoney(cartPrice)} تومان
               </Typography>
             </Box>
-            <Button
-              sx={{ paddingY: "0.7rem" }}
-              variant="contained"
-              color="primary"
-            >
-              ورود و ثبت سفارش
-            </Button>
+            <Link to="/cart" component={RouterLink}>
+              <Button
+                sx={{ paddingY: "0.7rem" }}
+                variant="contained"
+                color="primary"
+              >
+                ثبت سفارش
+              </Button>
+            </Link>
           </Box>
         </Box>
       </Popover>

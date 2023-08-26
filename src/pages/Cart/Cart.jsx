@@ -21,12 +21,14 @@ import {
   getCartQuantity,
   getDiscountedCart,
   getRawCartPrice,
+  sumDiscountCart,
 } from "../../hooks/numberUtils";
 
 function Cart() {
   const products = useSelector((state) => state.cart.products);
   const cartItemNumber = getCartQuantity(products);
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+
   const Title = () => {
     return (
       <Box display="flex" alignItems="center" gap={1}>
@@ -117,6 +119,7 @@ function Cart() {
                 itemNumber={cartItemNumber}
                 rawPrice={getRawCartPrice(products)}
                 discountedPrice={getDiscountedCart(products)}
+                sumDiscountCart={sumDiscountCart(products)}
                 cartPrice={formatMoney(getCartPrice(products))}
               />
             </Box>

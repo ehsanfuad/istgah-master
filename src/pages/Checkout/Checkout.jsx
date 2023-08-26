@@ -38,6 +38,11 @@ function Checkout() {
   };
   const products = useSelector((state) => state.cart.products);
 
+  //decode jwt and get user id
+  //get first name and laste name of user and current address
+  //if error 401
+  //set backUrl to /checkout
+  //redirect to login page
   return (
     <>
       <Container maxWidth="xl">

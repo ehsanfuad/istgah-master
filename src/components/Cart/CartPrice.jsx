@@ -9,9 +9,21 @@ import {
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../Theme";
+import { useDispatch } from "react-redux";
+import { setBackUrl } from "../../store/urlReducer";
 
-function CartPrice({ itemNumber, rawPrice, discountedPrice, cartPrice }) {
+function CartPrice({
+  itemNumber,
+  rawPrice,
+  discountedPrice,
+  cartPrice,
+  sumDiscountCart,
+}) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  // const jwt = localStorage.getItem("jwt");
+  const dispatch = useDispatch();
+  // dispatch(setBackUrl(jwt ? "/" : "/checkout"));
+  // const path = jwt ? "/checkout" : "/login";
   return (
     <Container maxWidth="xl">
       <Box
@@ -51,7 +63,7 @@ function CartPrice({ itemNumber, rawPrice, discountedPrice, cartPrice }) {
             جمع تخفیف
           </Typography>
           <Typography variant="subtitle1" fontSize="0.8rem">
-            {discountedPrice} تومان
+            {sumDiscountCart} تومان
           </Typography>
         </Box>
         <Box
@@ -59,7 +71,12 @@ function CartPrice({ itemNumber, rawPrice, discountedPrice, cartPrice }) {
           flexDirection="row"
           justifyContent="center"
         >
-          <Link to="/checkout" component={RouterLink} underline="none">
+          <Link
+            to="/checkout"
+            component={RouterLink}
+            underline="none"
+            onClick={() => dispatch(setBackUrl("/checkout"))}
+          >
             <Button
               variant="contained"
               size="large"

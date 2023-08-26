@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Link,
+  Stack,
   TextField,
   Typography,
   useMediaQuery,
@@ -11,9 +13,16 @@ import { theme } from "../../Theme";
 import useClasses from "../../hooks/useClasses";
 import { loginSchema } from "../../schemas/index";
 import { Field, Form, Formik, useFormik } from "formik";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { setBackUrl } from "../../store/urlReducer";
 
 function SendMobile({ setReadyVerifyForm, handleMobileNumber }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const [github, setGithub] = useState(false);
+  const [google, setGoogle] = useState(false);
+  const location = useLocation();
   const styles = (theme) => ({
     thaiTextFieldInputProps: {
       paddingTop: "1rem",
@@ -38,6 +47,7 @@ function SendMobile({ setReadyVerifyForm, handleMobileNumber }) {
   return (
     <Box
       display="flex"
+      flexDirection="column"
       alignItems="center"
       justifyContent="center"
       width="100wh"
@@ -48,7 +58,7 @@ function SendMobile({ setReadyVerifyForm, handleMobileNumber }) {
         flexDirection="column"
         gap={2}
         px={biggerThanMd ? 3 : 0}
-        height="60vh"
+        // height="60vh"
         width={biggerThanMd ? "350px" : "100%"}
         border={biggerThanMd ? 1 : 0}
         borderRadius={2}
@@ -103,7 +113,7 @@ function SendMobile({ setReadyVerifyForm, handleMobileNumber }) {
                       error={touched.mobile && Boolean(errors.mobile)}
                       helperText={touched.mobile && errors.mobile}
                       className={classes.root}
-                      autoFocus
+                      // autoFocus
                     />
                   )}
                 </Field>
@@ -121,13 +131,68 @@ function SendMobile({ setReadyVerifyForm, handleMobileNumber }) {
             </Form>
           )}
         </Formik>
-        <Box>
-          <Typography fontSize="0.7rem" color={theme.palette.grey[700]}>
-            ورود شما به معنای پذیرش شرایط
-            <Link underline="none">کافه ایستگاه </Link>و
-            <Link underline="none">قوانین حریم‌ خصوصی</Link> است
-          </Typography>
+        {/* sign in buttons */}
+        <Box
+          gap={1}
+          pb={1}
+          display="flex"
+          flexDirection={biggerThanMd ? "row" : "column"}
+          justifyContent="space-between"
+        >
+          <Link
+            component={RouterLink}
+            to={`${process.env.REACT_APP_UPLOAD_URL}/api/connect/google`}
+          >
+            <Button
+              variant="outlined"
+              disabled={google}
+              onClick={() => setGoogle(true)}
+              startIcon={
+                google ? (
+                  <CircularProgress
+                    style={{ marginLeft: "1rem" }}
+                    size="1.5rem"
+                  />
+                ) : (
+                  <FaGoogle style={{ marginLeft: "1rem" }} />
+                )
+              }
+              fullWidth
+            >
+              ادامه با گوگل
+            </Button>
+          </Link>
+          <Link
+            component={RouterLink}
+            to={`${process.env.REACT_APP_UPLOAD_URL}/api/connect/github`}
+          >
+            <Button
+              variant="outlined"
+              disabled={github}
+              fullWidth
+              onClick={() => setGithub(true)}
+              startIcon={
+                github ? (
+                  <CircularProgress
+                    style={{ marginLeft: "1rem" }}
+                    size="1.5rem"
+                  />
+                ) : (
+                  <FaGithub style={{ marginLeft: "1rem" }} />
+                )
+              }
+            >
+              ادامه با گیت
+            </Button>
+          </Link>
         </Box>
+      </Box>
+      <Box pt={1}>
+        <Typography fontSize="0.7rem" color={theme.palette.grey[700]}>
+          ورود شما به معنای پذیرش شرایط
+          <Link underline="none">کافه ایستگاه </Link>و
+          <Link underline="none">قوانین حریم‌ خصوصی</Link> است
+        </Typography>
       </Box>
     </Box>
   );

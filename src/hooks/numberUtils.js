@@ -71,6 +71,16 @@ export const getDiscountedCart = (products) => {
   });
   return price > 0 ? formatMoney(price) : null;
 };
+export const sumDiscountCart = (products) => {
+  let discount = 0;
+  products.forEach((product) => {
+    if (product.discountedPrice) {
+      discount =
+        discount + (product.price - product.discountedPrice) * product.quantity;
+    }
+  });
+  return discount > 0 ? formatMoney(discount) : null;
+};
 export function showPrice(dynamicType, product) {
   return dynamicType?.discountedPrice || product?.discountedPrice
     ? formatMoney(

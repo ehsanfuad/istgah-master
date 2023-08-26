@@ -28,15 +28,16 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CoffeeMakerIcon from "@mui/icons-material/CoffeeMaker";
 import WineBarIcon from "@mui/icons-material/WineBar";
 import { theme } from "../../Theme";
-import { TbBrandCoinbase } from "react-icons/tb";
+import { TbBrandCoinbase, TbLogin } from "react-icons/tb";
 //----------ICONS----------//
 import MegaMenu from "../MegaMenu/MegaMenu";
 import SideMenu from "../SideMenu/SideMenu";
 import Cart from "../Cart/Cart";
 import { FiShoppingCart } from "react-icons/fi";
 import Search from "../Search/Search";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getCartQuantity } from "../../hooks/numberUtils";
+import { setBackUrl } from "../../store/urlReducer";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -92,8 +93,11 @@ function Navbar() {
       setIsShowCart(true);
     }
   }, [location.pathname]);
-  const products = useSelector((state) => state.cart.products);
 
+  const products = useSelector((state) => state.cart.products);
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt");
+  const username = localStorage.getItem("username");
   if (loading) return "Loading";
   const categories = res;
   const handleClick = (event, children) => {
@@ -197,16 +201,43 @@ function Navbar() {
                   <Search placeholder="جستجو" />
                 </Box>
                 <Box display="flex" gap={1}>
-                  <IconButton
-                    size="inherit"
-                    sx={{
-                      color: (theme) => theme.palette.grey[800],
-                    }}
-                    disableRipple
-                  >
-                    <PersonIcon />
-                    <ExpandMoreIcon style={{ width: "12px" }} />
-                  </IconButton>
+                  {jwt ? (
+                    <Link to="/profile" component={RouterLink}>
+                      <IconButton
+                        size="inherit"
+                        sx={{
+                          color: (theme) => theme.palette.grey[800],
+                        }}
+                        disableRipple
+                      >
+                        <PersonIcon />
+                        <ExpandMoreIcon style={{ width: "12px" }} />
+                      </IconButton>
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/login"
+                      component={RouterLink}
+                      color="inherit"
+                      underline="none"
+                      onClick={() => dispatch(setBackUrl("/"))}
+                    >
+                      <IconButton
+                        size="inherit"
+                        sx={{
+                          color: (theme) => theme.palette.grey[800],
+                          pb: "0.7rem",
+                        }}
+                        disableRipple
+                      >
+                        <TbLogin size={22} />
+                        <Typography pb={0.4} fontSize="0.9rem">
+                          ورود
+                        </Typography>
+                      </IconButton>
+                    </Link>
+                  )}
+
                   <Divider orientation="vertical" />
                   <Link
                     to="/cart"
