@@ -1,4 +1,5 @@
 // import { Alert, Snackbar } from "@mui/material";
+import { Alert, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,19 +21,6 @@ function LoginRedirect() {
   const [text, setText] = useState("Loading...");
   const queryParams = new URLSearchParams(location.search);
   const accessToken = queryParams.get("access_token");
-  // const [openAlert, setAlertOpen] = useState(true);
-  // const handleClose = () => {
-  //   setAlertOpen(false);
-  // };
-  // const showAlert = () => {
-  //   return (
-  //     <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
-  //       <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-  //         This is a success message!
-  //       </Alert>
-  //     </Snackbar>
-  //   );
-  // };
   useEffect(() => {
     fetch(
       `${process.env.REACT_APP_UPLOAD_URL}/api/auth/${providerName}/callback?access_token=${accessToken}`
@@ -48,14 +36,21 @@ function LoginRedirect() {
         localStorage.setItem("jwt", res.jwt);
         localStorage.setItem("username", res.user.username);
         //show toast
-        // setAlertOpen(true);
-        // showAlert();
-        enqueueSnackbar("This is a success message!", "success");
+        enqueueSnackbar(
+          <Alert variant="filled" severity="success">
+            <Typography>ورود با موفقیت انجام شد</Typography>
+          </Alert>
+        );
         navigate(backUrl);
       })
       .catch((err) => {
         console.log(err);
         //show toast
+        enqueueSnackbar(
+          <Alert variant="filled" severity="error">
+            <Typography>ورود با خطا مواجه شد</Typography>
+          </Alert>
+        );
         navigate("/login");
       });
   }, []);
