@@ -6,7 +6,7 @@ import { FiUser } from "react-icons/fi";
 import { IoLogOutOutline } from "react-icons/io5";
 import { BiChevronLeft, BiHomeSmile } from "react-icons/bi";
 import { Box, Typography, Link, Divider, useMediaQuery } from "@mui/material";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { theme } from "../../Theme";
 
 const items = [
@@ -38,7 +38,7 @@ const items = [
   {
     icon: <IoLogOutOutline size={22} />,
     title: "خروج",
-    path: "/profile/logout",
+    path: "/login",
   },
 ];
 function checkExistOrnot(active, itemPath) {
@@ -52,15 +52,24 @@ function Menu() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const [active, setActive] = useState(items[0].path);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setActive(location.pathname);
   }, [location.pathname]);
+  const handleLogout = (index) => {
+    const lastItemIndex = items.length - 1;
+    if (lastItemIndex === index) {
+      navigate("/");
+      localStorage.removeItem("jwt");
+    }
+  };
 
   return (
     <Box display="flex" flexDirection="column">
       {items.map((item, index) => (
         <Box
+          onClick={() => handleLogout(index)}
           key={index}
           display={index === 0 && !biggerThanMd ? "none" : "block"}
         >

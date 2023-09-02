@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   useMediaQuery,
+  Alert,
 } from "@mui/material";
 import { theme } from "../../Theme";
 import useClasses from "../../hooks/useClasses";
@@ -14,10 +15,19 @@ import { verifySchema } from "../../schemas/index";
 import { Field, Form, Formik, useFormik } from "formik";
 import { FaArrowRight } from "react-icons/fa";
 import Counter from "./Counter";
+import usePostData from "../../hooks/usePostData";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function VerifyMobile({ setReadyVerifyForm, mobileNumber }) {
-  const TIME = 180;
+  const TIME = 10;
   const [count, setCount] = useState(TIME);
+  const { postData, isLoading, error, result } = usePostData();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const backUrl = useSelector((state) => state.urlManager.backUrl);
+
   const isRegistred = false;
   const isRegistredMessage = `حساب کاربری با شماره موبایل ${mobileNumber} وجود ندارد. برای ساخت حساب جدید،کد تایید برای این شماره ارسال گردید.`;
   const isNotRegistredMessage = `کد تایید برای شماره ${mobileNumber} پیامک شد`;
@@ -36,9 +46,34 @@ function VerifyMobile({ setReadyVerifyForm, mobileNumber }) {
     },
   });
   const classes = useClasses(styles);
-
+  useEffect(() => {
+    if (result?.jwt) {
+      localStorage.setItem("jwt", result.jwt);
+      localStorage.setItem("username", result.user.username);
+      navigate(backUrl);
+      //show toast
+      enqueueSnackbar(
+        <Alert variant="filled" severity="success">
+          <Typography>ورود با موفقیت انجام شد</Typography>
+        </Alert>
+      );
+    }
+  }, [result]);
   const handleSubmit = (values, errors) => {
-    console.log(values.verifyNumber);
+    const otp = values.verifyNumber;
+    const dataToSend = { data: { mobileNumber: mobileNumber, otp: otp } };
+    postData("/mobile/getOtp", dataToSend);
+    console.log("result", result);
+    console.log("error", error);
+    console.log("isloading", isLoading);
+  };
+
+  const handleResendCode = () => {
+    const dataToSend = { data: { mobileNumber: mobileNumber } };
+    postData("/mobile/getMobile", dataToSend);
+    console.log("result", result);
+    console.log("error", error);
+    setCount(TIME);
   };
 
   return (
@@ -143,7 +178,7 @@ function VerifyMobile({ setReadyVerifyForm, mobileNumber }) {
                     sx={{ display: count > 0 ? "none" : "block" }}
                     variant="text"
                     color="primary"
-                    onClick={() => setCount(TIME)}
+                    onClick={handleResendCode}
                   >
                     <Typography fontSize="0.8rem">دریافت مجدد کد</Typography>
                   </Button>

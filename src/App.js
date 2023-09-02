@@ -25,6 +25,7 @@ import PersonalInfo from "./pages/Profile/PersonalInfo/PersonalInfo";
 import Checkout from "./pages/Checkout/Checkout";
 import LoginRedirect from "./pages/LoginRedirect/LoginRedirect";
 import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
+import PublicRoutes from "./components/PublicRoutes/PublicRoutes";
 const Layout = () => {
   return (
     <div className="app">
@@ -105,7 +106,10 @@ const router = createBrowserRouter(
         <Route path="/search/:category?/:id?" element={<Search />} />
         <Route path="/product/:id?/:categoryId?" element={<Product />} />
       </Route>
-      <Route path="login" element={<Login />} />
+      <Route element={<PublicRoutes />}>
+        <Route path="login" element={<Login />} />
+      </Route>
+
       <Route path="cart" element={<Cart />} />
       <Route
         path="/connect/:providerName/redirect"
