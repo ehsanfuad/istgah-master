@@ -50,7 +50,12 @@ function VerifyMobile({ setReadyVerifyForm, mobileNumber }) {
     if (result?.jwt) {
       localStorage.setItem("jwt", result.jwt);
       localStorage.setItem("username", result.user.username);
-      navigate(backUrl);
+      if (result.user.firstName === null) {
+        navigate("/profile/personal-info");
+      } else {
+        navigate(backUrl);
+      }
+
       //show toast
       enqueueSnackbar(
         <Alert variant="filled" severity="success">

@@ -6,25 +6,54 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import BackButton from "../components/BackButton";
 import { theme } from "../../../Theme";
 import { Field, Form, Formik } from "formik";
+import jwt_decode from "jwt-decode";
+import useFetch from "../../../hooks/useFetch";
 //rtl
 import { CacheProvider } from "@emotion/react";
 import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import createCache from "@emotion/cache";
 import { presonalInfoSchema } from "../../../schemas";
+
 function PersonalInfo() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const jwt = localStorage.getItem("jwt");
+  let userId = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    console.log(error);
+  }
+  const { res, loading, error } = useFetch(`/users/${userId}`);
+
+  console.log("userid", userId);
+  if (loading) return "";
+  if (!loading && res?.error?.status > 400) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+  if (res.data === null) return "";
+  const user = res;
+  console.log("user", user.username);
   const onSubmit = (values, errors) => {
+    const updatedUser = {
+      firstName: values.name,
+      lastName: values.family,
+      email: values.email,
+    };
+
     console.log(values);
   };
   const cacheRtl = createCache({
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
+
   return (
     <Box display="flex" flexDirection="column" p={2} gap={1}>
       <Box display={biggerThanMd ? "none" : "block"}>
@@ -44,7 +73,7 @@ function PersonalInfo() {
           name: "",
           family: "",
           email: "",
-          mobile: "09194209344",
+          mobile: user.username,
         }}
         validationSchema={presonalInfoSchema}
         onSubmit={onSubmit}

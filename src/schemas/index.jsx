@@ -43,7 +43,7 @@ export const presonalInfoSchema = yup.object().shape({
     .max(20, "مقدار وارد شده طولانی هست"),
   email: yup
     .string()
-    .required(commonErrorAddress)
+    // .required(commonErrorAddress)
     .matches(
       // Regular expression for email validation
       /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
