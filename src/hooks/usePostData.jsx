@@ -4,14 +4,14 @@ function usePostData() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-
-  const postData = async (url, postData) => {
+  const [statusRequset, setStatusRequset] = useState(0);
+  const postData = async (url, postData, method = "POST") => {
     setIsLoading(true);
     setError(null);
 
     try {
       const response = await fetch(process.env.REACT_APP_API_URL + url, {
-        method: "POST",
+        method: method,
         headers: {
           "Content-Type": "application/json",
           // Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
@@ -23,9 +23,9 @@ function usePostData() {
       if (!response.ok) {
         throw new Error("Request failed");
       }
-
+      setStatusRequset(response.status);
       const responseData = await response.json();
-      if (responseData) {
+      if (responseData?.jwt) {
         console.log(responseData);
         localStorage.setItem("jwt", responseData.jwt);
       }
@@ -39,7 +39,7 @@ function usePostData() {
     }
   };
 
-  return { postData, isLoading, error, result: data };
+  return { postData, isLoading, error, result: data, statusRequset };
 }
 
 export default usePostData;
