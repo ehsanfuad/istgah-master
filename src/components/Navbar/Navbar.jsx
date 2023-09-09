@@ -25,10 +25,8 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import CoffeeMakerIcon from "@mui/icons-material/CoffeeMaker";
-import WineBarIcon from "@mui/icons-material/WineBar";
 import { theme } from "../../Theme";
-import { TbBrandCoinbase, TbLogin } from "react-icons/tb";
+import { TbBrandCoinbase, TbLogin, TbMug } from "react-icons/tb";
 //----------ICONS----------//
 import MegaMenu from "../MegaMenu/MegaMenu";
 import SideMenu from "../SideMenu/SideMenu";
@@ -38,6 +36,8 @@ import Search from "../Search/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { getCartQuantity } from "../../hooks/numberUtils";
 import { setBackUrl } from "../../store/urlReducer";
+import { CiCoffeeBean, CiSettings } from "react-icons/ci";
+import { MdCoffeeMaker } from "react-icons/md";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -63,11 +63,13 @@ const StyledButtonNav = styled(Button)(({ theme }) => ({
 const getIcon = (index) => {
   switch (index) {
     case 0:
-      return <CoffeeMakerIcon sx={{ fontSize: "2rem" }} />;
+      return <CiCoffeeBean />;
     case 1:
-      return <WineBarIcon />;
+      return <MdCoffeeMaker />;
     case 2:
-      return <TbBrandCoinbase style={{ fontSize: "15px" }} />;
+      return <CiSettings />;
+    case 3:
+      return <TbMug />;
     default:
       break;
   }
@@ -146,16 +148,18 @@ function Navbar() {
                 >
                   <MenuIcon />
                 </IconButton>
-                <Typography
-                  variant="body1"
-                  fontSize="1.3rem"
-                  component="div"
-                  sx={{
-                    color: (theme) => theme.palette.primary.main,
-                  }}
-                >
-                  کافه ایستگاه
-                </Typography>
+                <Link to="/" component={RouterLink} color="inherit">
+                  <Typography
+                    variant="body1"
+                    fontSize="1.3rem"
+                    component="div"
+                    sx={{
+                      color: (theme) => theme.palette.primary.main,
+                    }}
+                  >
+                    کافه ایستگاه
+                  </Typography>
+                </Link>
                 <IconButton
                   size="inherit"
                   sx={{
@@ -179,25 +183,27 @@ function Navbar() {
                     width: { xs: "100%" },
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: { xs: "none", md: "flex" },
-                      color: (theme) => theme.palette.common.black,
-                    }}
-                    alignItems="center"
-                    gap={1}
-                  >
-                    <Box width="40px" mr={-0.3}>
-                      <img width="100%" src={logo} alt="لوگوی کافه ایستگاه" />
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      fontSize="1.5rem"
-                      component="div"
+                  <Link to="/" component={RouterLink} color="inherit">
+                    <Box
+                      sx={{
+                        display: { xs: "none", md: "flex" },
+                        color: (theme) => theme.palette.common.black,
+                      }}
+                      alignItems="center"
+                      gap={1}
                     >
-                      کافه ایستگاه
-                    </Typography>
-                  </Box>
+                      <Box width="40px" mr={-0.3}>
+                        <img width="100%" src={logo} alt="لوگوی کافه ایستگاه" />
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        fontSize="1.5rem"
+                        component="div"
+                      >
+                        کافه ایستگاه
+                      </Typography>
+                    </Box>
+                  </Link>
                   <Search placeholder="جستجو" />
                 </Box>
                 <Box display="flex" gap={1}>
@@ -300,7 +306,7 @@ function Navbar() {
                               color: (theme) => theme.palette.grey[900],
                               width: "100%",
                             }}
-                            ml={0.2}
+                            ml={0.5}
                           >
                             {category.name}
                           </Typography>

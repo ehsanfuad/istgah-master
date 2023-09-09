@@ -21,15 +21,14 @@ function usePostData() {
       });
 
       if (!response.ok) {
+        setStatusRequset(response.status);
         throw new Error("Request failed");
       }
       setStatusRequset(response.status);
       const responseData = await response.json();
       if (responseData?.jwt) {
-        console.log(responseData);
         localStorage.setItem("jwt", responseData.jwt);
       }
-      console.log(responseData);
       setData(responseData);
       setIsLoading(false);
     } catch (err) {

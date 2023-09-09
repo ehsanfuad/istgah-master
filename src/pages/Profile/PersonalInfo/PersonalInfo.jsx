@@ -21,19 +21,30 @@ import createCache from "@emotion/cache";
 import { presonalInfoSchema } from "../../../schemas";
 import usePostData from "../../../hooks/usePostData";
 import { useSnackbar } from "notistack";
+import Loading from "../../../components/Loading/Loading";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useAuth } from "../../../hooks/useAuth";
 
 function PersonalInfo() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const navigate = useNavigate();
+  const backUrl = useSelector((state) => state.urlManager.backUrl);
   const { enqueueSnackbar } = useSnackbar();
+
   const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
   let userId = null;
   try {
     const decoded = jwt_decode(jwt);
     userId = decoded.id;
   } catch (error) {
-    console.log(error);
+    jwtErrorMessage = error.message;
+    console.log("error", error);
   }
+
   const { res, loading, error } = useFetch(`/users/${userId}`);
+  console.log(res);
   const {
     postData,
     isLoading,
@@ -49,18 +60,33 @@ function PersonalInfo() {
           <Typography>تغییرات با موفقیت اعمال شد</Typography>
         </Alert>
       );
+      navigate(backUrl);
+    } else if (statusRequset == 400) {
+      //show toast
+      enqueueSnackbar(
+        <Alert variant="filled" severity="error">
+          <Typography>این ایمیل قبلا ثبت شده است</Typography>
+        </Alert>
+      );
     }
   }, [statusRequset]);
+
   const checkEmailisValid = (email, username) => {
-    const emailId = email.substring(0, email.indexOf("@"));
+    let emailId;
+    try {
+      emailId = email.substring(0, email.indexOf("@"));
+    } catch (error) {
+      console.log(error);
+    }
+
     if (emailId === username) {
       return false;
     } else {
       return true;
     }
   };
-  if (loading) return "";
-  if (!loading && res?.error?.status > 400) {
+  if (loading || isLoading) return <Loading />;
+  if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
     localStorage.removeItem("jwt");
     window.location.reload(false);
   }
@@ -80,7 +106,6 @@ function PersonalInfo() {
         lastName: values.family,
       };
     }
-
     postData(`/users/${user.id}`, updatedUser, "PUT");
   };
   const cacheRtl = createCache({
@@ -106,7 +131,7 @@ function PersonalInfo() {
         initialValues={{
           name: user.firstName ? user.firstName : "",
           family: user.lastName ? user.lastName : "",
-          email: checkEmailisValid(user.email, user.username) ? user.email : "",
+          // email: checkEmailisValid(user.email, user.username) ? user.email : "",
           mobile: user.username,
         }}
         validationSchema={presonalInfoSchema}

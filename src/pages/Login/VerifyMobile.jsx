@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function VerifyMobile({ setReadyVerifyForm, mobileNumber }) {
-  const TIME = 10;
+  const TIME = 180;
   const [count, setCount] = useState(TIME);
   const { postData, isLoading, error, result } = usePostData();
   const navigate = useNavigate();
@@ -66,18 +66,13 @@ function VerifyMobile({ setReadyVerifyForm, mobileNumber }) {
   }, [result]);
   const handleSubmit = (values, errors) => {
     const otp = values.verifyNumber;
-    const dataToSend = { data: { mobileNumber: mobileNumber, otp: otp } };
+    const dataToSend = { data: { mobileNumber: mobileNumber, code: otp } };
     postData("/mobile/getOtp", dataToSend);
-    console.log("result", result);
-    console.log("error", error);
-    console.log("isloading", isLoading);
   };
 
   const handleResendCode = () => {
     const dataToSend = { data: { mobileNumber: mobileNumber } };
     postData("/mobile/getMobile", dataToSend);
-    console.log("result", result);
-    console.log("error", error);
     setCount(TIME);
   };
 
