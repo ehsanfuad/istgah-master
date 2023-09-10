@@ -42,9 +42,10 @@ function PersonalInfo() {
     jwtErrorMessage = error.message;
     console.log("error", error);
   }
+  const { res, loading, error } = useFetch(
+    `/users/${userId}?fields[0]=firstName&fields[1]=lastName&fields[2]=username&fields[3]=email`
+  );
 
-  const { res, loading, error } = useFetch(`/users/${userId}`);
-  console.log(res);
   const {
     postData,
     isLoading,

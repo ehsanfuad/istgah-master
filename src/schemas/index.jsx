@@ -18,8 +18,8 @@ export const verifySchema = yup.object().shape({
 const commonErrorAddress = "اینجا را خالی نگذارید";
 export const addressSchema = yup.object().shape({
   address: yup.string().required(commonErrorAddress),
-  state: yup.string().required(commonErrorAddress),
-  city: yup.string().required(commonErrorAddress),
+  state: yup.object().required(commonErrorAddress),
+  city: yup.object().required(commonErrorAddress),
   unit: yup
     .number()
     .typeError("شماره پلاک باید فقط شامل عدد انگلیسی باشد")

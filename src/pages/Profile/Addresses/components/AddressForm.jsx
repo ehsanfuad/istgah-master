@@ -20,11 +20,47 @@ import { prefixer } from "stylis";
 import rtlPlugin from "stylis-plugin-rtl";
 import createCache from "@emotion/cache";
 import { addressSchema } from "../../../../schemas/index";
+import usePostData from "../../../../hooks/usePostData";
+import jwt_decode from "jwt-decode";
 
 function AddressForm({ setShowForm, location, handleCloseMap }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+
+  const {
+    postData,
+    isLoading,
+    error: postError,
+    result,
+    statusRequset,
+  } = usePostData();
+  const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
+  let userId = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    jwtErrorMessage = error.message;
+    console.log("error", error);
+  }
+
   const onSubmit = (values, errors) => {
-    
+    console.log(values);
+    const addressOpject = {
+      data: {
+        address: values.address,
+        state: values.state.id,
+        city: values.city.id,
+        pelak: values.unit,
+        unit: values.vahed,
+        postalCode: values.postalCode,
+        longitude: values.location.lng.toString(),
+        latitude: values.location.lat.toString(),
+        users_permissions_user: 15,
+      },
+    };
+    postData("/addresses", addressOpject);
+    console.log(result);
     handleCloseMap();
   };
   const cacheRtl = createCache({
@@ -1438,7 +1474,6 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
     return allCities.find((item, index) => item.id === stateId).cities;
   };
   const [cities, setCities] = useState(findCities(8));
-  
 
   return (
     <>
@@ -1509,7 +1544,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
                               }
                               onChange={(event, newValue) => {
                                 if (newValue) {
-                                  setFieldValue("state", newValue.label || ""); // Use a fallback empty string if label is undefined
+                                  setFieldValue("state", newValue || ""); // Use a fallback empty string if label is undefined
                                 } else {
                                   setFieldValue("state", ""); // Handle the case where newValue is null or undefined
                                 }
@@ -1545,7 +1580,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
                               }
                               onChange={(event, newValue) => {
                                 if (newValue) {
-                                  setFieldValue("city", newValue.label || ""); // Use a fallback empty string if label is undefined
+                                  setFieldValue("city", newValue || ""); // Use a fallback empty string if label is undefined
                                 } else {
                                   setFieldValue("city", ""); // Handle the case where newValue is null or undefined
                                 }

@@ -1,21 +1,51 @@
+// import { useEffect, useState } from "react";
+// import jwt_decode from "jwt-decode";
+
+// export function useAuth(jwt) {
+//   const [userId, setUserId] = useState(1);
+//   const [jwtErrorMessage, setJwtErrorMessage] = useState(false);
+
+//   useEffect( () => {
+//     if (jwt) {
+//       try {
+//         const decoded = await jwt_decode(jwt);
+//         setUserId(decoded.id);
+//       } catch (error) {
+//         setJwtErrorMessage(true);
+//         console.log("error", error);
+//       }
+//     }
+//   }, []);
+
+//   return { userId, jwtErrorMessage };
+// }
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
 export function useAuth(jwt) {
-  const [userId, setUserId] = useState(null);
-  const [jwtHasError, setJwtHasError] = useState(false);
+  const [userId, setUserId] = useState(null); // Initialize userId as null
+  const [jwtErrorMessage, setJwtErrorMessage] = useState(false);
 
   useEffect(() => {
-    if (jwt) {
-      try {
-        const decoded = jwt_decode(jwt);
-        setUserId(decoded.id);
-      } catch (error) {
-        setJwtHasError(true);
-        console.log("error", error);
+    async function fetchUserId() {
+      if (jwt) {
+        try {
+          const decoded = await jwt_decode(jwt);
+          setUserId(decoded.id);
+        } catch (error) {
+          setJwtErrorMessage(true);
+          console.log("error", error);
+        }
       }
     }
-  }, []);
 
-  return { userId, jwtHasError };
+    fetchUserId();
+  }, [jwt]);
+
+  // Return null until userId is set
+  if (userId === null) {
+    return { userId, jwtErrorMessage };
+  }
+
+  return { userId, jwtErrorMessage };
 }
