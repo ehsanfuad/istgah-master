@@ -14,6 +14,9 @@ import { theme } from "../../../Theme";
 import AddressDialog from "./components/AddressDialog";
 import BackButton from "../components/BackButton";
 import AddressCard from "./components/AddressCard";
+import jwt_decode from "jwt-decode";
+import useFetch from "../../../hooks/useFetch";
+import Loading from "../../../components/Loading/Loading";
 
 function Addresses() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -22,6 +25,29 @@ function Addresses() {
   const { latitude, longitude } = useGeolocation();
   const [location, setLocation] = useState(null);
 
+  const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
+  let userId = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    jwtErrorMessage = error.message;
+    console.log("error", error);
+  }
+  const { res, loading, error } = useFetch(
+    `/users/${userId}?fields[0]=firstName&fields[1]=lastName&fields[2]=username&fields[3]=email&fields[4]=selectedAddress&populate[0]=addresses`
+  );
+  if (loading) return <Loading />;
+  if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+
+  const userName = `${res?.firstName} ${res?.lastName}`;
+  const addresses = res?.addresses.reverse();
+  const mobile = res?.username;
+  console.log(res);
   const handleOpenMap = () => {
     setOpenMap(true);
     setShowForm(false);
@@ -92,27 +118,28 @@ function Addresses() {
         </Modal>
       ) : (
         <Dialog fullScreen open={openMap} onClose={handleCloseMap}>
-          <>
-            <AddressDialog
-              handleCloseMap={handleCloseMap}
-              latitude={latitude}
-              longitude={longitude}
-              location={location}
-              setLocation={setLocation}
-              showForm={showForm}
-              setShowForm={setShowForm}
-            />
-          </>
+          <AddressDialog
+            handleCloseMap={handleCloseMap}
+            latitude={latitude}
+            longitude={longitude}
+            location={location}
+            setLocation={setLocation}
+            showForm={showForm}
+            setShowForm={setShowForm}
+          />
         </Dialog>
       )}
-      <Box display="flex" flexDirection="column" mt={4}>
-        <AddressCard
-          state="تهران"
-          address="ظفر، خ. ولیعصر، بعد از بل میرداماد، خ. قبادیان غربی، برج های مسکونی اسکان"
-          postalCode="۸۷۶۵۴۵۶۷۸۷"
-          mobile="۰۹۱۹۹۱۴۶۱۱۹"
-          name="امیر حسین خیام باشی"
-        />
+      <Box display="flex" flexDirection="column" mt={4} gap={1}>
+        {addresses.map((address, index) => (
+          <AddressCard
+            id={address.id}
+            state={address.city}
+            address={address.address}
+            postalCode={address.postalCode}
+            mobile={mobile}
+            name={userName}
+          />
+        ))}
       </Box>
     </Box>
   );

@@ -132,7 +132,7 @@ function PersonalInfo() {
         initialValues={{
           name: user.firstName ? user.firstName : "",
           family: user.lastName ? user.lastName : "",
-          // email: checkEmailisValid(user.email, user.username) ? user.email : "",
+          email: checkEmailisValid(user.email, user.username) ? user.email : "",
           mobile: user.username,
         }}
         validationSchema={presonalInfoSchema}

@@ -7,7 +7,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BackButton from "../../components/BackButton";
 import { Formik, Form, Field } from "formik";
 import { theme } from "../../../../Theme";
@@ -22,17 +22,19 @@ import createCache from "@emotion/cache";
 import { addressSchema } from "../../../../schemas/index";
 import usePostData from "../../../../hooks/usePostData";
 import jwt_decode from "jwt-decode";
+import Loading from "../../../../components/Loading/Loading";
 
 function AddressForm({ setShowForm, location, handleCloseMap }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
   const {
     postData,
-    isLoading,
-    error: postError,
-    result,
-    statusRequset,
+    isLoadingAddress,
+    error: addressError,
+    result: addressResult,
+    statusRequset: addressStatus,
   } = usePostData();
+
   const jwt = localStorage.getItem("jwt");
   let jwtErrorMessage = null;
   let userId = null;
@@ -44,30 +46,15 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
     console.log("error", error);
   }
 
-  const onSubmit = (values, errors) => {
-    console.log(values);
-    const addressOpject = {
-      data: {
-        address: values.address,
-        state: values.state.id,
-        city: values.city.id,
-        pelak: values.unit,
-        unit: values.vahed,
-        postalCode: values.postalCode,
-        longitude: values.location.lng.toString(),
-        latitude: values.location.lat.toString(),
-        users_permissions_user: 15,
-      },
-    };
-    postData("/addresses", addressOpject);
-    console.log(result);
-    handleCloseMap();
-  };
-  const cacheRtl = createCache({
-    key: "muirtl",
-    stylisPlugins: [prefixer, rtlPlugin],
-  });
-
+  useEffect(() => {
+    console.log("addressResult", addressResult);
+    if (addressResult?.data?.id) {
+      const selectedAddress = {
+        selectedAddress: addressResult.data.id,
+      };
+      postData(`/users/${userId}`, selectedAddress, "PUT");
+    }
+  }, [addressResult]);
   const allStates = [
     {
       id: 1,
@@ -1474,6 +1461,34 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
     return allCities.find((item, index) => item.id === stateId).cities;
   };
   const [cities, setCities] = useState(findCities(8));
+
+  if (isLoadingAddress) return <Loading />;
+  if (jwtErrorMessage) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+
+  const onSubmit = (values, errors) => {
+    const addressOpject = {
+      data: {
+        address: values.address,
+        state: values.state.id,
+        city: values.city.id,
+        pelak: values.unit,
+        unit: values.vahed,
+        postalCode: values.postalCode,
+        longitude: values.location.lng.toString(),
+        latitude: values.location.lat.toString(),
+        users_permissions_user: userId,
+      },
+    };
+    postData("/addresses", addressOpject);
+    window.location.reload(false);
+  };
+  const cacheRtl = createCache({
+    key: "muirtl",
+    stylisPlugins: [prefixer, rtlPlugin],
+  });
 
   return (
     <>
