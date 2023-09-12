@@ -144,6 +144,7 @@ function Addresses() {
             postalCode={address.postalCode}
             mobile={mobile}
             name={userName}
+            handleOpenMap={handleOpenMap}
           />
         ))}
       </Box>

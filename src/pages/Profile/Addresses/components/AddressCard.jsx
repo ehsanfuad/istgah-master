@@ -11,8 +11,17 @@ import { theme } from "../../../../Theme";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import usePostData from "../../../../hooks/usePostData";
 import { useDispatch } from "react-redux";
+import { removeAddress } from "../../../../store/addressReducer";
 
-function AddressCard({ address, state, postalCode, mobile, name, id }) {
+function AddressCard({
+  address,
+  state,
+  postalCode,
+  mobile,
+  name,
+  id,
+  handleOpenMap,
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const { result, error, isLoading, postData, statusRequset } = usePostData();
@@ -31,11 +40,11 @@ function AddressCard({ address, state, postalCode, mobile, name, id }) {
   };
   const handleDelete = () => {
     postData(`/addresses/${id}`, null, "DELETE");
-
+    dispatch(removeAddress(id));
     handleClose();
   };
   const handleEdit = () => {
-    console.log("edit");
+    handleOpenMap();
     handleClose();
   };
   return (

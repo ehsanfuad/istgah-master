@@ -32,7 +32,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
   const dispatch = useDispatch();
   const {
     postData,
-    isLoadingAddress,
+    isLoading,
     error: addressError,
     result: addressResult,
     statusRequset: addressStatus,
@@ -51,6 +51,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
 
   useEffect(() => {
     if (addressResult?.data?.id) {
+      handleCloseMap();
       //   const selectedAddress = {
       //     selectedAddress: addressResult.data.id,
       //   };
@@ -1474,7 +1475,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
   };
   const [cities, setCities] = useState(findCities(8));
 
-  if (isLoadingAddress) return <Loading />;
+  if (isLoading) return <Loading />;
   if (jwtErrorMessage) {
     localStorage.removeItem("jwt");
     window.location.reload(false);
@@ -1496,8 +1497,6 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
     };
 
     postData("/addresses", addressObject);
-
-    // window.location.reload(false);
   };
   const cacheRtl = createCache({
     key: "muirtl",
