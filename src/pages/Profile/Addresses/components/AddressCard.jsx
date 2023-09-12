@@ -1,5 +1,5 @@
 import { Box, Divider, Menu, MenuItem, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BsThreeDotsVertical,
   BsSignpost2,
@@ -9,9 +9,19 @@ import {
 import { FiUser } from "react-icons/fi";
 import { theme } from "../../../../Theme";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import usePostData from "../../../../hooks/usePostData";
+import { useDispatch } from "react-redux";
 
 function AddressCard({ address, state, postalCode, mobile, name, id }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
+  const { result, error, isLoading, postData, statusRequset } = usePostData();
+
+  // useEffect(() => {
+  //   if (result?.data?.id === id) {
+  //     window.location.reload(false);
+  //   }
+  // }, [result != null]);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,9 +30,14 @@ function AddressCard({ address, state, postalCode, mobile, name, id }) {
     setAnchorEl(null);
   };
   const handleDelete = () => {
-    console.log("delete");
-  };
+    postData(`/addresses/${id}`, null, "DELETE");
 
+    handleClose();
+  };
+  const handleEdit = () => {
+    console.log("edit");
+    handleClose();
+  };
   return (
     <Box
       display="flex"
@@ -82,13 +97,13 @@ function AddressCard({ address, state, postalCode, mobile, name, id }) {
         <BsThreeDotsVertical size={22} onClick={handleClick} />
       </Box>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleEdit}>
           <Box display="flex" alignItems="center" gap={1}>
             <FaEdit color="green" />
             <Typography>ویرایش</Typography>
           </Box>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleDelete}>
           <Box display="flex" alignItems="center" gap={1}>
             <FaTrashAlt color="red" />
             <Typography>حذف</Typography>

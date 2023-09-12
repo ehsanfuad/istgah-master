@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { makeRequest } from "./makeRequest";
+import { setAddress } from "../store/addressReducer";
+import { useDispatch } from "react-redux";
 
 const useFetch = (url) => {
   const [res, setRes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -16,6 +19,10 @@ const useFetch = (url) => {
         });
         const data = await response.json();
         setRes(data);
+        if (data?.addresses) {
+          dispatch(setAddress(data?.addresses));
+        }
+
         setLoading(false);
       } catch (error) {
         setError(true);

@@ -23,10 +23,13 @@ import { addressSchema } from "../../../../schemas/index";
 import usePostData from "../../../../hooks/usePostData";
 import jwt_decode from "jwt-decode";
 import Loading from "../../../../components/Loading/Loading";
+import { useDispatch, useSelector } from "react-redux";
+import { addAddress } from "../../../../store/addressReducer";
 
 function AddressForm({ setShowForm, location, handleCloseMap }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-
+  const addresses = useSelector((state) => state.address.addresses);
+  const dispatch = useDispatch();
   const {
     postData,
     isLoadingAddress,
@@ -47,12 +50,21 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
   }
 
   useEffect(() => {
-    console.log("addressResult", addressResult);
     if (addressResult?.data?.id) {
-      const selectedAddress = {
-        selectedAddress: addressResult.data.id,
-      };
-      postData(`/users/${userId}`, selectedAddress, "PUT");
+      //   const selectedAddress = {
+      //     selectedAddress: addressResult.data.id,
+      //   };
+      //   postData(`/users/${userId}`, selectedAddress, "PUT");
+      // }
+      // dispatch(addAddress(addAddress.data));
+      const addressId = addressResult?.data.id;
+      let addressObj = addressResult?.data.attributes;
+      addressObj["id"] = addressId;
+      // const newAddress = {
+      //   id: addressId,
+      //   addressObj,
+      // };
+      dispatch(addAddress(addressObj));
     }
   }, [addressResult]);
   const allStates = [
@@ -1469,11 +1481,11 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
   }
 
   const onSubmit = (values, errors) => {
-    const addressOpject = {
+    const addressObject = {
       data: {
         address: values.address,
-        state: values.state.id,
-        city: values.city.id,
+        state: values.state,
+        city: values.city,
         pelak: values.unit,
         unit: values.vahed,
         postalCode: values.postalCode,
@@ -1482,8 +1494,10 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
         users_permissions_user: userId,
       },
     };
-    postData("/addresses", addressOpject);
-    window.location.reload(false);
+
+    postData("/addresses", addressObject);
+
+    // window.location.reload(false);
   };
   const cacheRtl = createCache({
     key: "muirtl",

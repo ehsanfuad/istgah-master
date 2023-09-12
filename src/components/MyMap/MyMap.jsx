@@ -6,7 +6,6 @@ import "leaflet/dist/leaflet.css";
 import "./map.css";
 
 function MyMap({ location, setLocation, latitude, longitude }) {
-  console.log("location", location);
   const customIcon = new Icon({
     iconUrl: require("./icon/placeholder.png"),
     iconSize: [20, 20], // size of the icon

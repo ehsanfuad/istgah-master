@@ -6,7 +6,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiLocationPlus } from "react-icons/bi";
 import AddressModal from "./components/AddressModal";
 import useGeolocation from "../../../hooks/useGeolocation";
@@ -17,6 +17,8 @@ import AddressCard from "./components/AddressCard";
 import jwt_decode from "jwt-decode";
 import useFetch from "../../../hooks/useFetch";
 import Loading from "../../../components/Loading/Loading";
+import { useDispatch, useSelector } from "react-redux";
+import { setAddress } from "../../../store/addressReducer";
 
 function Addresses() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -24,6 +26,8 @@ function Addresses() {
   const [showForm, setShowForm] = useState(false);
   const { latitude, longitude } = useGeolocation();
   const [location, setLocation] = useState(null);
+  const dispatch = useDispatch();
+  const addresses = useSelector((state) => state.address.addresses);
 
   const jwt = localStorage.getItem("jwt");
   let jwtErrorMessage = null;
@@ -38,16 +42,16 @@ function Addresses() {
   const { res, loading, error } = useFetch(
     `/users/${userId}?fields[0]=firstName&fields[1]=lastName&fields[2]=username&fields[3]=email&fields[4]=selectedAddress&populate[0]=addresses`
   );
+
   if (loading) return <Loading />;
   if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
     localStorage.removeItem("jwt");
     window.location.reload(false);
   }
-
   const userName = `${res?.firstName} ${res?.lastName}`;
-  const addresses = res?.addresses.reverse();
+
+  // const addresses = res?.addresses.reverse();
   const mobile = res?.username;
-  console.log(res);
   const handleOpenMap = () => {
     setOpenMap(true);
     setShowForm(false);
@@ -55,6 +59,7 @@ function Addresses() {
   const handleCloseMap = () => {
     setOpenMap(false);
   };
+
   return (
     <Box display="flex" flexDirection="column" p={2} mb={10}>
       <Box
@@ -132,8 +137,9 @@ function Addresses() {
       <Box display="flex" flexDirection="column" mt={4} gap={1}>
         {addresses.map((address, index) => (
           <AddressCard
+            key={index}
             id={address.id}
-            state={address.city}
+            state={address.city.label}
             address={address.address}
             postalCode={address.postalCode}
             mobile={mobile}

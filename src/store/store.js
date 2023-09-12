@@ -12,6 +12,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import addressReducer from "./addressReducer";
 
 const persistConfig = {
   key: "root",
@@ -27,7 +28,11 @@ const persistConfig2 = {
 const persistedReducer = persistReducer(persistConfig, cartReducer);
 const persistedReducer2 = persistReducer(persistConfig2, urlReducer);
 export const store = configureStore({
-  reducer: { cart: persistedReducer, urlManager: persistedReducer2 },
+  reducer: {
+    cart: persistedReducer,
+    urlManager: persistedReducer2,
+    address: addressReducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
