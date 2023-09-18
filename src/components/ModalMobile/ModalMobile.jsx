@@ -73,7 +73,7 @@ function ModalMobile({ open, setOpen, titleComponent, contentComponent }) {
           }}
         >
           <Puller />
-          <Typography sx={{ py: 1, color: "text.secondary" }}>
+          <Typography sx={{ py: 1, color: "text.secondary" }} component="span">
             {titleComponent}
           </Typography>
           <Divider />

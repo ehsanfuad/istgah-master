@@ -7,6 +7,7 @@ import { BiChevronLeft } from "react-icons/bi";
 import ModalMobile from "../../../components/ModalMobile/ModalMobile";
 import ModalContainer from "../../../components/ModalContainer/ModalContainer";
 import ChangeAddress from "../../Profile/Addresses/components/ChangeAddress";
+import { useSelector } from "react-redux";
 function Title({ handleClose }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
@@ -16,7 +17,7 @@ function Title({ handleClose }) {
       justifyContent="space-between"
       p={2}
     >
-      <Typography>انتخاب آدرس</Typography>
+      <Typography component="span">انتخاب آدرس</Typography>
       <Box
         display={biggerThanMd ? "block" : "none"}
         sx={{ cursor: "pointer" }}
@@ -27,7 +28,7 @@ function Title({ handleClose }) {
     </Box>
   );
 }
-function AddressCard() {
+function AddressCard({ user }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   //open select address
   const [open, setOpen] = useState(false);
@@ -38,6 +39,12 @@ function AddressCard() {
   const handleClose = () => {
     setOpen(false);
   };
+  const userName = `${user.firstName} ${user.lastName}`;
+  const selectedAddressId = user.selectedAddress;
+  const addresses = useSelector((state) => state.address.addresses);
+  const userSelectedAddress = addresses.find(
+    (address, index) => address.id === selectedAddressId
+  );
 
   return (
     <>
@@ -59,14 +66,14 @@ function AddressCard() {
               color={theme.palette.grey[900]}
               lineHeight={2}
             >
-              جمالزاده، خ. کارگر شمالی، نرسیده به بل کشاورز، خ. محمد علی صدوقی
+              {userSelectedAddress.address}
             </Typography>
             <Typography
               fontSize="0.8rem"
               variant="subtitle1"
               color={theme.palette.grey[700]}
             >
-              امیر حسین خیام باشی
+              {userName}
             </Typography>
           </Box>
         </Box>
@@ -90,7 +97,14 @@ function AddressCard() {
           <>
             <ModalContainer
               title={<Title handleClose={handleClose} />}
-              content={<ChangeAddress handleClose={handleClose} />}
+              content={
+                <ChangeAddress
+                  handleClose={handleClose}
+                  addresses={addresses}
+                  selectedAddressId={selectedAddressId}
+                  user={user}
+                />
+              }
             />
           </>
         </Modal>
@@ -99,7 +113,13 @@ function AddressCard() {
           open={open}
           setOpen={setOpen}
           titleComponent={<Title />}
-          contentComponent={<ChangeAddress />}
+          contentComponent={
+            <ChangeAddress
+              addresses={addresses}
+              selectedAddressId={selectedAddressId}
+              user={user}
+            />
+          }
         />
       )}
     </>

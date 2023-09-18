@@ -24,12 +24,14 @@ import usePostData from "../../../../hooks/usePostData";
 import jwt_decode from "jwt-decode";
 import Loading from "../../../../components/Loading/Loading";
 import { useDispatch, useSelector } from "react-redux";
-import { addAddress } from "../../../../store/addressReducer";
+import { addAddress, updateAddress } from "../../../../store/addressReducer";
 
 function AddressForm({ setShowForm, location, handleCloseMap }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const addresses = useSelector((state) => state.address.addresses);
+  const addressId = useSelector((state) => state.address.id);
   const dispatch = useDispatch();
+  let address = addresses.find((item) => item.id == addressId);
   const {
     postData,
     isLoading,
@@ -50,21 +52,17 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
   }
 
   useEffect(() => {
-    if (addressResult?.data?.id) {
+    //when new address has been created add to redux and set to user default address
+    address = addresses.find((item) => item.id == addressId);
+    if (addressResult?.data?.id && addressId === null) {
       handleCloseMap();
-      //   const selectedAddress = {
-      //     selectedAddress: addressResult.data.id,
-      //   };
-      //   postData(`/users/${userId}`, selectedAddress, "PUT");
-      // }
-      // dispatch(addAddress(addAddress.data));
-      const addressId = addressResult?.data.id;
+      const selectedAddress = {
+        selectedAddress: addressResult.data.id,
+      };
+      postData(`/users/${userId}`, selectedAddress, "PUT");
+      const newAddressId = addressResult?.data.id;
       let addressObj = addressResult?.data.attributes;
-      addressObj["id"] = addressId;
-      // const newAddress = {
-      //   id: addressId,
-      //   addressObj,
-      // };
+      addressObj["id"] = newAddressId;
       dispatch(addAddress(addressObj));
     }
   }, [addressResult]);
@@ -1495,8 +1493,16 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
         users_permissions_user: userId,
       },
     };
-
-    postData("/addresses", addressObject);
+    if (addressId != null) {
+      addressObject.data["id"] = addressId;
+      console.log(addressObject);
+      dispatch(updateAddress(addressObject.data));
+      postData(`/addresses/${addressId}`, addressObject, "PUT");
+      handleCloseMap();
+    } else {
+      console.log(addressObject);
+      postData("/addresses", addressObject);
+    }
   };
   const cacheRtl = createCache({
     key: "muirtl",
@@ -1510,12 +1516,12 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
           <Formik
             initialValues={{
               location,
-              address: "",
-              state: null,
-              city: null,
-              unit: "",
-              vahed: "",
-              postalCode: "",
+              address: address ? address.address : "",
+              state: address ? address.state : null,
+              city: address ? address.city : null,
+              unit: address ? address.pelak : "",
+              vahed: address ? address.unit : "",
+              postalCode: address ? address.postalCode : "",
             }}
             validationSchema={addressSchema}
             onSubmit={onSubmit}

@@ -4,6 +4,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import { Icon, divIcon, point } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./map.css";
+import { useSelector } from "react-redux";
 
 function MyMap({ location, setLocation, latitude, longitude }) {
   const customIcon = new Icon({

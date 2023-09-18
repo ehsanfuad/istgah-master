@@ -10,7 +10,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiChevronLeft } from "react-icons/bi";
 import { MdOutlineAddLocation } from "react-icons/md";
 import useGeolocation from "../../../../hooks/useGeolocation";
@@ -18,14 +18,25 @@ import { theme } from "../../../../Theme";
 import AddressModal from "./AddressModal";
 import AddressDialog from "./AddressDialog";
 import AddressCard from "./AddressCard";
+import usePostData from "../../../../hooks/usePostData";
 
-function ChangeAddress({ handleClose }) {
+function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const [openMap, setOpenMap] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const { latitude, longitude } = useGeolocation();
   const [location, setLocation] = useState(null);
-  const [selectedAddress, setSelectedAddress] = useState(1);
+  const [selectedAddress, setSelectedAddress] = useState(selectedAddressId);
+  const { postData, isLoading, error, result, statusRequset } = usePostData();
+
+  useEffect(() => {
+    const selectedAddressForUpdate = {
+      selectedAddress,
+    };
+    postData(`/users/${user.id}`, selectedAddressForUpdate, "PUT");
+    console.log(selectedAddress);
+  }, [selectedAddress]);
+
   const handleOpenMap = () => {
     setOpenMap(true);
     setShowForm(false);
@@ -34,7 +45,8 @@ function ChangeAddress({ handleClose }) {
     setOpenMap(false);
   };
   const handleChangeAddresses = (event) => {
-    setSelectedAddress(event.target.value);
+    const id = parseInt(event.target.value);
+    setSelectedAddress(id);
   };
   return (
     <>
@@ -67,52 +79,38 @@ function ChangeAddress({ handleClose }) {
               value={selectedAddress}
               onChange={handleChangeAddresses}
             >
-              <Box
-                display="flex"
-                alignItems="start"
-                justifyContent="space-between"
-              >
-                <Box>
-                  <FormControlLabel
-                    sx={{ m: 0 }}
-                    value={1}
-                    control={<Radio />}
-                    label=""
-                  />
+              {addresses.map((address, index) => (
+                <Box
+                  display="flex"
+                  alignItems="start"
+                  justifyContent="space-between"
+                  key={index}
+                >
+                  <Box>
+                    <FormControlLabel
+                      sx={{ m: 0 }}
+                      value={address.id}
+                      control={<Radio />}
+                      label=""
+                    />
+                  </Box>
+                  <Box flexGrow={1} mt={1}>
+                    <AddressCard
+                      key={index}
+                      id={address.id}
+                      setLocation={setLocation}
+                      lat={parseFloat(address.latitude)}
+                      long={parseFloat(address.longitude)}
+                      state={address.city.label}
+                      address={address.address}
+                      postalCode={address.postalCode}
+                      // mobile={mobile}
+                      // name={userName}
+                      handleOpenMap={handleOpenMap}
+                    />
+                  </Box>
                 </Box>
-                <Box flexGrow={1} mt={1}>
-                  <AddressCard
-                    state="تهران"
-                    address="ظفر، خ. ولیعصر، بعد از بل میرداماد، خ. قبادیان غربی، برج های مسکونی اسکان"
-                    postalCode="۸۷۶۵۴۵۶۷۸۷"
-                    mobile="۰۹۱۹۹۱۴۶۱۱۹"
-                    name="امیر حسین خیام باشی"
-                  />
-                </Box>
-              </Box>
-              <Box
-                display="flex"
-                alignItems="start"
-                justifyContent="space-between"
-              >
-                <Box>
-                  <FormControlLabel
-                    sx={{ m: 0 }}
-                    value={2}
-                    control={<Radio />}
-                    label=""
-                  />
-                </Box>
-                <Box flexGrow={1} mt={1}>
-                  <AddressCard
-                    state="تهران"
-                    address="خ. ولیعصر، بعد از م. ونک، خ. شریفی"
-                    postalCode="۳۴۲۳۴۵۶۷۵۹"
-                    mobile="۰۹۱۹۹۱۴۶۱۱۹"
-                    name="امیر حسین خیام باشی"
-                  />
-                </Box>
-              </Box>
+              ))}
             </RadioGroup>
           </FormControl>
         </Box>

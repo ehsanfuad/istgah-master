@@ -27,7 +27,6 @@ function Product() {
   );
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   if (loading) return "...";
-  console.log(product);
   return (
     <Box sx={{ paddingBottom: mobileVersion ? "82px" : "0" }}>
       <Container maxWidth="xl">

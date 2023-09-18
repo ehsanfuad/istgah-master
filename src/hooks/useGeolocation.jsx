@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const useGeolocation = () => {
-  const [latitude, setLatitude] = useState(35.699231);
-  const [longitude, setLongitude] = useState(51.337508);
+  // const addresses = useSelector((state) => state.address.addresses);
+  // const addressId = useSelector((state) => state.address.id);
+  // let lat = null;
+  // let long = null;
+  // if (addressId) {
+  //   const address = addresses.find((item) => item.id == addressId);
+  //   lat = parseFloat(address.latitude);
+  //   long = parseFloat(address.longitude);
+  // }
+
+  // const [latitude, setLatitude] = useState(lat ? lat : 35.700008);
+  // const [longitude, setLongitude] = useState(long ? long : 51.334303);
+  const [latitude, setLatitude] = useState(35.700008);
+  const [longitude, setLongitude] = useState(51.334303);
 
   useEffect(() => {
     const fetchLocation = () => {

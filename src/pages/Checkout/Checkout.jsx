@@ -18,6 +18,7 @@ import AddressCard from "./components/AddressCard";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import useDraggableContainer from "../../hooks/useDraggableContainer ";
 import { useSelector } from "react-redux";
+import jwt_decode from "jwt-decode";
 import {
   formatMoney,
   formatNumber,
@@ -26,6 +27,8 @@ import {
   getDiscountedCart,
   getRawCartPrice,
 } from "../../hooks/numberUtils";
+import useFetch from "../../hooks/useFetch";
+import Loading from "../../components/Loading/Loading";
 
 function Checkout() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -38,11 +41,27 @@ function Checkout() {
   };
   const products = useSelector((state) => state.cart.products);
 
-  //decode jwt and get user id
-  //get first name and laste name of user and current address
-  //if error 401
-  //set backUrl to /checkout
-  //redirect to login page
+  const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
+  let userId = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    jwtErrorMessage = error.message;
+    console.log("error", error);
+  }
+  const { res, loading, error } = useFetch(
+    `/users/${userId}?fields[0]=firstName&fields[1]=lastName&fields[2]=username&fields[3]=selectedAddress&populate[0]=addresses`
+  );
+
+  if (loading) return <Loading />;
+  if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+  if (res.data === null) return "";
+  const user = res
   return (
     <>
       <Container maxWidth="xl">
@@ -85,7 +104,7 @@ function Checkout() {
                 borderColor={theme.palette.grey[300]}
                 height="fit-content"
               >
-                <AddressCard />
+                <AddressCard user={user}/>
               </Box>
               <Divider sx={{ display: biggerThanMd ? "none" : "block" }} />
               {/* code takhfif */}
@@ -201,6 +220,7 @@ function Checkout() {
                           display="flex"
                           flexDirection="column"
                           position="relative"
+                          key={index}
                         >
                           <img
                             src="https://www.technolife.ir/image/gallery-1-TLP-4993_5024bc63-9f0a-47d8-9d2b-fd555eacc08e.webp"

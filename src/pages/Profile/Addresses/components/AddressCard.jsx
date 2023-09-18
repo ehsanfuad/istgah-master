@@ -10,8 +10,8 @@ import { FiUser } from "react-icons/fi";
 import { theme } from "../../../../Theme";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import usePostData from "../../../../hooks/usePostData";
-import { useDispatch } from "react-redux";
-import { removeAddress } from "../../../../store/addressReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { getAddressId, removeAddress } from "../../../../store/addressReducer";
 
 function AddressCard({
   address,
@@ -21,11 +21,13 @@ function AddressCard({
   name,
   id,
   handleOpenMap,
+  setLocation,
+  lat,
+  long,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const { result, error, isLoading, postData, statusRequset } = usePostData();
-
   // useEffect(() => {
   //   if (result?.data?.id === id) {
   //     window.location.reload(false);
@@ -44,6 +46,12 @@ function AddressCard({
     handleClose();
   };
   const handleEdit = () => {
+    dispatch(getAddressId(id));
+    let latLong = {
+      lat: lat,
+      lng: long,
+    };
+    setLocation(latLong);
     handleOpenMap();
     handleClose();
   };
