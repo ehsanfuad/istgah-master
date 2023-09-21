@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { makeRequest } from "./makeRequest";
-import { setAddress } from "../store/addressReducer";
+import { getAddressId, setAddress } from "../store/addressReducer";
 import { useDispatch } from "react-redux";
 
 const useFetch = (url) => {
@@ -21,6 +21,7 @@ const useFetch = (url) => {
         setRes(data);
         if (data?.addresses) {
           dispatch(setAddress(data?.addresses));
+          dispatch(getAddressId(data?.selectedAddress));
         }
 
         setLoading(false);

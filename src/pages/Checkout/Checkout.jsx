@@ -8,7 +8,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "../../Theme";
 import BrandTitle from "./components/BrandTitle";
 import CheckoutStepper from "./components/CheckoutStepper";
@@ -34,12 +34,22 @@ function Checkout() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const [showCode, setShowCode] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [userHasAddress, setUserHasAddress] = useState(false);
   const { containerRef, handleMouseDown, handleTouchStart } =
     useDraggableContainer();
   const handleOnClickCode = () => {
     setShowCode(true);
   };
   const products = useSelector((state) => state.cart.products);
+  const addresses = useSelector((state) => state.address.addresses);
+
+  useEffect(() => {
+    if (addresses.length > 0) {
+      setUserHasAddress(true);
+    } else {
+      setUserHasAddress(false);
+    }
+  }, [addresses.length]);
 
   const jwt = localStorage.getItem("jwt");
   let jwtErrorMessage = null;
@@ -61,7 +71,13 @@ function Checkout() {
     window.location.reload(false);
   }
   if (res.data === null) return "";
-  const user = res
+  if (!userHasAddress) return "آدرس موجود نیست";
+  const user = res;
+  // if (addresses.length <= 0) {
+  //   setUserHasAddress(false);
+  //
+  // }
+  console.log("userHasAddress", userHasAddress);
   return (
     <>
       <Container maxWidth="xl">
@@ -104,7 +120,7 @@ function Checkout() {
                 borderColor={theme.palette.grey[300]}
                 height="fit-content"
               >
-                <AddressCard user={user}/>
+                <AddressCard user={user} />
               </Box>
               <Divider sx={{ display: biggerThanMd ? "none" : "block" }} />
               {/* code takhfif */}

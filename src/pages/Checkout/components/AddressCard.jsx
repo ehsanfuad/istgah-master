@@ -1,5 +1,5 @@
 import { Box, Divider, Modal, Typography, useMediaQuery } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { theme } from "../../../Theme";
 import { MdClose } from "react-icons/md";
@@ -40,12 +40,15 @@ function AddressCard({ user }) {
     setOpen(false);
   };
   const userName = `${user.firstName} ${user.lastName}`;
-  const selectedAddressId = user.selectedAddress;
+  const selectedAddressId = useSelector((state) => state.address.id);
   const addresses = useSelector((state) => state.address.addresses);
   const userSelectedAddress = addresses.find(
     (address, index) => address.id === selectedAddressId
   );
 
+  useEffect(() => {
+    handleClose();
+  }, [selectedAddressId]);
   return (
     <>
       <Box display="flex" flexDirection="column">
@@ -115,6 +118,7 @@ function AddressCard({ user }) {
           titleComponent={<Title />}
           contentComponent={
             <ChangeAddress
+              handleClose={handleClose}
               addresses={addresses}
               selectedAddressId={selectedAddressId}
               user={user}

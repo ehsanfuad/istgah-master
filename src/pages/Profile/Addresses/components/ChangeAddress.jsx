@@ -19,6 +19,8 @@ import AddressModal from "./AddressModal";
 import AddressDialog from "./AddressDialog";
 import AddressCard from "./AddressCard";
 import usePostData from "../../../../hooks/usePostData";
+import { useDispatch } from "react-redux";
+import { getAddressId } from "../../../../store/addressReducer";
 
 function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -26,15 +28,18 @@ function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
   const [showForm, setShowForm] = useState(false);
   const { latitude, longitude } = useGeolocation();
   const [location, setLocation] = useState(null);
+  const dispatch = useDispatch();
   const [selectedAddress, setSelectedAddress] = useState(selectedAddressId);
   const { postData, isLoading, error, result, statusRequset } = usePostData();
-
+  const userName = `${user?.firstName} ${user?.lastName}`;
+  const mobile = user?.username;
   useEffect(() => {
     const selectedAddressForUpdate = {
       selectedAddress,
     };
+
+    dispatch(getAddressId(selectedAddress));
     postData(`/users/${user.id}`, selectedAddressForUpdate, "PUT");
-    console.log(selectedAddress);
   }, [selectedAddress]);
 
   const handleOpenMap = () => {
@@ -104,8 +109,8 @@ function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
                       state={address.city.label}
                       address={address.address}
                       postalCode={address.postalCode}
-                      // mobile={mobile}
-                      // name={userName}
+                      mobile={mobile}
+                      name={userName}
                       handleOpenMap={handleOpenMap}
                     />
                   </Box>
