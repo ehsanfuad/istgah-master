@@ -1,9 +1,12 @@
 import {
   Box,
   Container,
+  Dialog,
   Divider,
   Grid,
   InputBase,
+  Link,
+  Modal,
   Paper,
   Typography,
   useMediaQuery,
@@ -29,27 +32,45 @@ import {
 } from "../../hooks/numberUtils";
 import useFetch from "../../hooks/useFetch";
 import Loading from "../../components/Loading/Loading";
-
+import GetUserIfo from "./components/GetUserIfo";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { Link as RouterLink } from "react-router-dom";
+import useGeolocation from "../../hooks/useGeolocation";
+import AddressModal from "../Profile/Addresses/components/AddressModal";
+import AddressDialog from "../Profile/Addresses/components/AddressDialog";
+import { useDispatch } from "react-redux";
+import { getAddressId } from "../../store/addressReducer";
+import { setBackUrl } from "../../store/urlReducer";
 function Checkout() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const products = useSelector((state) => state.cart.products);
+  const addreses = useSelector((state) => state.address.addresses);
+  const dispatch = useDispatch();
   const [showCode, setShowCode] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [userHasAddress, setUserHasAddress] = useState(false);
+  // jensaye address
+  const [openMap, setOpenMap] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  let { latitude, longitude } = useGeolocation();
+  const [location, setLocation] = useState(null);
+  const [userHasAddress, setUserHasAddress] = useState(
+    addreses.length > 0 ? true : false
+  );
+  // jensaye address
+  const [personalInfo, setPersonalInfo] = useState(false);
   const { containerRef, handleMouseDown, handleTouchStart } =
     useDraggableContainer();
   const handleOnClickCode = () => {
     setShowCode(true);
   };
-  const products = useSelector((state) => state.cart.products);
-  const addresses = useSelector((state) => state.address.addresses);
 
   useEffect(() => {
-    if (addresses.length > 0) {
-      setUserHasAddress(true);
-    } else {
+    if (addreses.length <= 0) {
       setUserHasAddress(false);
+    } else {
+      setUserHasAddress(true);
     }
-  }, [addresses.length]);
+  }, [addreses]);
 
   const jwt = localStorage.getItem("jwt");
   let jwtErrorMessage = null;
@@ -71,13 +92,18 @@ function Checkout() {
     window.location.reload(false);
   }
   if (res.data === null) return "";
-  if (!userHasAddress) return "آدرس موجود نیست";
   const user = res;
-  // if (addresses.length <= 0) {
-  //   setUserHasAddress(false);
-  //
-  // }
-  console.log("userHasAddress", userHasAddress);
+
+  console.log(personalInfo);
+  // const handleOpenAddress = () => {};
+  const handleOpenMap = () => {
+    setOpenMap(true);
+    setShowForm(false);
+    dispatch(getAddressId(null));
+  };
+  const handleCloseMap = () => {
+    setOpenMap(false);
+  };
   return (
     <>
       <Container maxWidth="xl">
@@ -302,6 +328,86 @@ function Checkout() {
       >
         <CheckoutPriceMobile cartPrice={formatMoney(getCartPrice(products))} />
       </Box>
+      <Dialog
+        open={
+          !userHasAddress || user.firstName === null || user.lastName === null
+            ? true
+            : false
+        }
+        maxWidth="xs"
+        fullWidth={true}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap={2}
+          pt={2}
+          pl={3}
+          pb={3}
+          pr={1}
+        >
+          {!userHasAddress && (
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={0.5}
+              onClick={handleOpenMap}
+              sx={{ cursor: "pointer" }}
+              color={theme.palette.primary.main}
+            >
+              <AiOutlinePlusCircle />
+              <Typography>ثبت آدرس</Typography>
+            </Box>
+          )}
+          {user.firstName === null || user.lastName === null ? (
+            <Link
+              component={RouterLink}
+              to="/profile/personal-info"
+              underline="none"
+              onClick={() => dispatch(setBackUrl("/checkout"))}
+            >
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={0.5}
+                sx={{ cursor: "pointer" }}
+                color={theme.palette.primary.main}
+              >
+                <AiOutlinePlusCircle />
+                <Typography>ثبت اطلاعات کاربری</Typography>
+              </Box>
+            </Link>
+          ) : null}
+        </Box>
+      </Dialog>
+      {/*  baraye baz kardan address */}
+      {biggerThanMd ? (
+        <Modal open={openMap} onClose={handleCloseMap}>
+          <>
+            <AddressModal
+              handleCloseMap={handleCloseMap}
+              latitude={latitude}
+              longitude={longitude}
+              location={location}
+              setLocation={setLocation}
+              showForm={showForm}
+              setShowForm={setShowForm}
+            />
+          </>
+        </Modal>
+      ) : (
+        <Dialog fullScreen open={openMap} onClose={handleCloseMap}>
+          <AddressDialog
+            handleCloseMap={handleCloseMap}
+            latitude={latitude}
+            longitude={longitude}
+            location={location}
+            setLocation={setLocation}
+            showForm={showForm}
+            setShowForm={setShowForm}
+          />
+        </Dialog>
+      )}
     </>
   );
 }

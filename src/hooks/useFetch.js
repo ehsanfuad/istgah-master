@@ -19,9 +19,12 @@ const useFetch = (url) => {
         });
         const data = await response.json();
         setRes(data);
+
         if (data?.addresses) {
           dispatch(setAddress(data?.addresses));
-          dispatch(getAddressId(data?.selectedAddress));
+        }
+        if (data?.selectedAddress) {
+          dispatch(getAddressId(data.selectedAddress));
         }
 
         setLoading(false);

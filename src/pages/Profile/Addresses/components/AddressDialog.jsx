@@ -25,7 +25,11 @@ function AddressDialog({
       {/* <Box height={showForm ? "90vh" : "75vh"}> */}
       <Box height="100%">
         {showForm ? (
-          <AddressForm setShowForm={setShowForm} location={location} />
+          <AddressForm
+            setShowForm={setShowForm}
+            location={location}
+            handleCloseMap={handleCloseMap}
+          />
         ) : (
           <MyMap
             location={location}

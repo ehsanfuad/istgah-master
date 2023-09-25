@@ -24,7 +24,11 @@ import usePostData from "../../../../hooks/usePostData";
 import jwt_decode from "jwt-decode";
 import Loading from "../../../../components/Loading/Loading";
 import { useDispatch, useSelector } from "react-redux";
-import { addAddress, updateAddress } from "../../../../store/addressReducer";
+import {
+  addAddress,
+  getAddressId,
+  updateAddress,
+} from "../../../../store/addressReducer";
 
 function AddressForm({ setShowForm, location, handleCloseMap }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -53,6 +57,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
 
   useEffect(() => {
     //when new address has been created add to redux and set to user default address
+    console.log("addressResult", addressResult);
     address = addresses.find((item) => item.id == addressId);
     if (addressResult?.data?.id && addressId === null) {
       handleCloseMap();
@@ -64,6 +69,7 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
       let addressObj = addressResult?.data.attributes;
       addressObj["id"] = newAddressId;
       dispatch(addAddress(addressObj));
+      dispatch(getAddressId(newAddressId));
     }
   }, [addressResult]);
   const allStates = [
@@ -1495,12 +1501,10 @@ function AddressForm({ setShowForm, location, handleCloseMap }) {
     };
     if (addressId != null) {
       addressObject.data["id"] = addressId;
-      console.log(addressObject);
       dispatch(updateAddress(addressObject.data));
       postData(`/addresses/${addressId}`, addressObject, "PUT");
       handleCloseMap();
     } else {
-      console.log(addressObject);
       postData("/addresses", addressObject);
     }
   };

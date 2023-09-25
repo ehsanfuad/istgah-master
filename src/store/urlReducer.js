@@ -7,7 +7,6 @@ const urlSlice = createSlice({
   },
   reducers: {
     setBackUrl: (url, action) => {
-      console.log(action.payload);
       url.backUrl = action.payload;
     },
   },

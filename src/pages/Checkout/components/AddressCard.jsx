@@ -39,6 +39,7 @@ function AddressCard({ user }) {
   const handleClose = () => {
     setOpen(false);
   };
+
   const userName = `${user.firstName} ${user.lastName}`;
   const selectedAddressId = useSelector((state) => state.address.id);
   const addresses = useSelector((state) => state.address.addresses);
@@ -49,6 +50,7 @@ function AddressCard({ user }) {
   useEffect(() => {
     handleClose();
   }, [selectedAddressId]);
+
   return (
     <>
       <Box display="flex" flexDirection="column">
@@ -69,7 +71,7 @@ function AddressCard({ user }) {
               color={theme.palette.grey[900]}
               lineHeight={2}
             >
-              {userSelectedAddress.address}
+              {userSelectedAddress?.address}
             </Typography>
             <Typography
               fontSize="0.8rem"

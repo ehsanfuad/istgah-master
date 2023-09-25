@@ -30,7 +30,7 @@ function Addresses() {
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
-    if (addressId != null && addresses.length > 0) {
+    if (addressId != null && addresses.lenth > 0) {
       const address = addresses.find((item) => item.id == addressId);
       let latLong = {
         lat: parseFloat(address?.latitude),

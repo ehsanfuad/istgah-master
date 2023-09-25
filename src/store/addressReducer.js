@@ -21,7 +21,6 @@ const addressSlice = createSlice({
       address.addresses = filtredAddress;
     },
     updateAddress: (address, action) => {
-      console.log(action.payload);
       const filtredAddress = address.addresses.filter(
         (item, index) => action.payload.id != item.id
       );

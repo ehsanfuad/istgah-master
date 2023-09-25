@@ -24,22 +24,20 @@ import { getAddressId } from "../../../../store/addressReducer";
 
 function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const dispatch = useDispatch();
   const [openMap, setOpenMap] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const { latitude, longitude } = useGeolocation();
   const [location, setLocation] = useState(null);
-  const dispatch = useDispatch();
   const [selectedAddress, setSelectedAddress] = useState(selectedAddressId);
   const { postData, isLoading, error, result, statusRequset } = usePostData();
-  const userName = `${user?.firstName} ${user?.lastName}`;
-  const mobile = user?.username;
+
   useEffect(() => {
     const selectedAddressForUpdate = {
       selectedAddress,
     };
-
-    dispatch(getAddressId(selectedAddress));
     postData(`/users/${user.id}`, selectedAddressForUpdate, "PUT");
+    console.log(selectedAddress);
   }, [selectedAddress]);
 
   const handleOpenMap = () => {
@@ -49,10 +47,14 @@ function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
   const handleCloseMap = () => {
     setOpenMap(false);
   };
+
   const handleChangeAddresses = (event) => {
     const id = parseInt(event.target.value);
     setSelectedAddress(id);
+    dispatch(getAddressId(id));
   };
+  const userName = `${user.firstName} ${user.lastName}`;
+  const mobile = user.username;
   return (
     <>
       <Box display="flex" flexDirection="column">
