@@ -6,11 +6,40 @@ import {
   useMediaQuery,
   Divider,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "../../../Theme";
+import usePostData from "../../../hooks/usePostData";
+import { useSelector } from "react-redux";
 
-function CheckoutPrice({ itemNumber, rawPrice, cartPrice, discountedPrice }) {
+function CheckoutPrice({
+  itemNumber,
+  rawPrice,
+  cartPrice,
+  discountedPrice,
+  sumDiscountCart,
+  products,
+  userId,
+}) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const addressId = useSelector((state) => state.address.id);
+  const [loading, setLoading] = useState(false);
+  const { postData, isLoading, error, result, statusRequset } = usePostData();
+  useEffect(() => {
+    //redirect to zarin pal
+    if (result != null) {
+      window.location.replace(result.link);
+    }
+  }, [result]);
+  const checkout = () => {
+    const data = {
+      products,
+      userId,
+      addressId,
+    };
+    setLoading(true);
+    postData(`/order/makeRequest`, data);
+  };
+
   return (
     <Box
       px={biggerThanMd ? 2 : 0}
@@ -66,7 +95,7 @@ function CheckoutPrice({ itemNumber, rawPrice, cartPrice, discountedPrice }) {
           سود شما از خرید
         </Typography>
         <Typography variant="body2" color="red" fontSize="0.8rem">
-          {discountedPrice} تومان
+          {sumDiscountCart} تومان
         </Typography>
       </Box>
       <Box
@@ -96,8 +125,10 @@ function CheckoutPrice({ itemNumber, rawPrice, cartPrice, discountedPrice }) {
           variant="contained"
           size="large"
           sx={{ paddingX: "5rem", marginBottom: "1rem", width: "100%" }}
+          onClick={() => checkout()}
+          disabled={loading || itemNumber === "۰" ? true : false}
         >
-          پرداخت
+          {loading ? "درحال انتقال..." : "پرداخت"}
         </Button>
       </Box>
     </Box>

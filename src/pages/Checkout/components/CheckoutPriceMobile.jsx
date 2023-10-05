@@ -1,10 +1,31 @@
 import { Box, Button, Typography, useMediaQuery } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "../../../Theme";
+import { useSelector } from "react-redux";
+import usePostData from "../../../hooks/usePostData";
 
-function CheckoutPriceMobile({ cartPrice }) {
+function CheckoutPriceMobile({ cartPrice, products, userId }) {
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
+  const addressId = useSelector((state) => state.address.id);
+  const [loading, setLoading] = useState(false);
+  const { postData, isLoading, error, result, statusRequset } = usePostData();
+  useEffect(() => {
+    //redirect to zarin pal
+    if (result != null) {
+      window.location.replace(result.link);
+    }
+  }, [result]);
+
   if (!mobileVersion) return null;
+  const checkout = () => {
+    const data = {
+      products,
+      userId,
+      addressId,
+    };
+    setLoading(true);
+    postData(`/order/makeRequest`, data);
+  };
   return (
     <Box
       position="fixed"
@@ -29,8 +50,10 @@ function CheckoutPriceMobile({ cartPrice }) {
           variant="contained"
           sx={{ paddingX: 6, paddingY: 1.3, borderRadius: 2 }}
           size="large"
+          onClick={() => checkout()}
+          disabled={loading || cartPrice === "۰" ? true : false}
         >
-          پرداخت
+          {loading ? "درحال انتقال..." : "پرداخت"}
         </Button>
         <Box display="flex" flexDirection="column">
           <Box position="relative" pl={0.5} justifyContent="end" display="flex">

@@ -37,7 +37,6 @@ function ChangeAddress({ handleClose, addresses, selectedAddressId, user }) {
       selectedAddress,
     };
     postData(`/users/${user.id}`, selectedAddressForUpdate, "PUT");
-    console.log(selectedAddress);
   }, [selectedAddress]);
 
   const handleOpenMap = () => {

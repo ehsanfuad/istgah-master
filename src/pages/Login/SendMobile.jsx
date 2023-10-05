@@ -48,8 +48,6 @@ function SendMobile({ setReadyVerifyForm, handleMobileNumber }) {
 
     const dataToSend = { data: { mobileNumber: mobileNumber } };
     postData("/mobile/getMobile", dataToSend);
-    console.log("result", result);
-    console.log("error", error);
     handleMobileNumber(values.mobile);
     setReadyVerifyForm(true);
   };

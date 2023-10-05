@@ -26,6 +26,7 @@ import Checkout from "./pages/Checkout/Checkout";
 import LoginRedirect from "./pages/LoginRedirect/LoginRedirect";
 import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
 import PublicRoutes from "./components/PublicRoutes/PublicRoutes";
+import Invoice from "./pages/Invoice/Invoice";
 const Layout = () => {
   return (
     <div className="app">
@@ -117,6 +118,7 @@ const router = createBrowserRouter(
       />
       <Route element={<PrivateRoutes />}>
         <Route path="checkout" element={<Checkout />} />
+        <Route path="invoice" element={<Invoice />} />
         <Route path="profile" element={<ProfileLayout />}>
           <Route path="" element={<Profile />} />
           <Route path="personal-info" element={<PersonalInfo />} />

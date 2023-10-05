@@ -29,6 +29,7 @@ import {
   getCartQuantity,
   getDiscountedCart,
   getRawCartPrice,
+  sumDiscountCart,
 } from "../../hooks/numberUtils";
 import useFetch from "../../hooks/useFetch";
 import Loading from "../../components/Loading/Loading";
@@ -57,6 +58,7 @@ function Checkout() {
     addreses.length > 0 ? true : false
   );
   // jensaye address
+
   const [personalInfo, setPersonalInfo] = useState(false);
   const { containerRef, handleMouseDown, handleTouchStart } =
     useDraggableContainer();
@@ -94,8 +96,6 @@ function Checkout() {
   if (res.data === null) return "";
   const user = res;
 
-  console.log(personalInfo);
-  // const handleOpenAddress = () => {};
   const handleOpenMap = () => {
     setOpenMap(true);
     setShowForm(false);
@@ -307,6 +307,9 @@ function Checkout() {
                 rawPrice={getRawCartPrice(products)}
                 cartPrice={formatMoney(getCartPrice(products))}
                 discountedPrice={getDiscountedCart(products)}
+                sumDiscountCart={sumDiscountCart(products)}
+                products={products}
+                userId={userId}
               />
             </Box>
           </Box>
@@ -326,7 +329,11 @@ function Checkout() {
         }}
         display={biggerThanMd ? "none" : "block"}
       >
-        <CheckoutPriceMobile cartPrice={formatMoney(getCartPrice(products))} />
+        <CheckoutPriceMobile
+          products={products}
+          userId={userId}
+          cartPrice={formatMoney(getCartPrice(products))}
+        />
       </Box>
       <Dialog
         open={

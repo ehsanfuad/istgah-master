@@ -8,7 +8,6 @@ function usePostData() {
   const postData = async (url, postData, method = "POST") => {
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await fetch(process.env.REACT_APP_API_URL + url, {
         method: method,
@@ -19,7 +18,6 @@ function usePostData() {
         },
         body: JSON.stringify(postData),
       });
-
       if (!response.ok) {
         setStatusRequset(response.status);
         throw new Error("Request failed");
