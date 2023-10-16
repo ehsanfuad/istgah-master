@@ -5,9 +5,33 @@ import { Link as RouterLink } from "react-router-dom";
 import { BiChevronLeft } from "react-icons/bi";
 import { BsFillBagCheckFill, BsBagXFill, BsBagPlusFill } from "react-icons/bs";
 import OrderSummery from "./Orders/components/OrderSummery";
+import jwt_decode from "jwt-decode";
+import useFetch from "../../hooks/useFetch";
+import Loading from "../../components/Loading/Loading";
 
 function Profile() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+
+  const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
+  let userId = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    jwtErrorMessage = error.message;
+    console.log("error", error);
+  }
+  const { res, loading, error } = useFetch(
+    `/orders?filters[userId][$eq]=${userId}`
+  );
+  console.log(res);
+  if (loading) return <Loading />;
+  if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+
   return (
     <Box p={2} display="flex" flexDirection="column">
       <Box
