@@ -25,12 +25,22 @@ function Profile() {
   const { res, loading, error } = useFetch(
     `/orders?filters[userId][$eq]=${userId}`
   );
-  console.log(res);
+
   if (loading) return <Loading />;
   if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
     localStorage.removeItem("jwt");
     window.location.reload(false);
   }
+
+  const canceled = res.data.filter(
+    (order) => order.attributes.stateOrder === "canceled"
+  ).length;
+  const completed = res.data.filter(
+    (order) => order.attributes.stateOrder === "completed"
+  ).length;
+  const posted = res.data.filter(
+    (order) => order.attributes.stateOrder === "posted"
+  ).length;
 
   return (
     <Box p={2} display="flex" flexDirection="column">
@@ -74,19 +84,19 @@ function Profile() {
           <Box>
             <OrderSummery
               icon={<BsBagPlusFill size="3rem" color="#0073cf" />}
-              ordercount={3}
+              ordercount={completed}
               title="پرداخت شده"
             />
           </Box>
           <OrderSummery
             icon={<BsFillBagCheckFill size="3rem" color="#007500" />}
-            ordercount={2}
-            title="تحویل شده"
+            ordercount={posted}
+            title="ارسال شده"
           />
           <Box>
             <OrderSummery
               icon={<BsBagXFill size="3rem" color="#750000" />}
-              ordercount={0}
+              ordercount={canceled}
               title="لغو شده"
             />
           </Box>

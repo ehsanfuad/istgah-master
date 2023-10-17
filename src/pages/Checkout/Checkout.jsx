@@ -42,6 +42,7 @@ import AddressDialog from "../Profile/Addresses/components/AddressDialog";
 import { useDispatch } from "react-redux";
 import { getAddressId } from "../../store/addressReducer";
 import { setBackUrl } from "../../store/urlReducer";
+import LazyImage from "../../components/LazyImage/LazyImage";
 function Checkout() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const products = useSelector((state) => state.cart.products);
@@ -264,9 +265,10 @@ function Checkout() {
                           position="relative"
                           key={index}
                         >
-                          <img
-                            src="https://www.technolife.ir/image/gallery-1-TLP-4993_5024bc63-9f0a-47d8-9d2b-fd555eacc08e.webp"
-                            width="100px"
+                          <LazyImage
+                            imageUrl={product?.image}
+                            width={100}
+                            height={100}
                           />
                           <Box
                             bottom="0"

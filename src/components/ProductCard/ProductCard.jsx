@@ -23,6 +23,7 @@ import { calDiscountPercent, formatMoney } from "../../hooks/numberUtils";
 function ProductCard({ product }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
+  console.log(product);
   const styles = (theme) => ({
     root: {
       // maxWidth: 345,
@@ -69,7 +70,7 @@ function ProductCard({ product }) {
             >
               <LazyImage
                 imageUrl={
-                  process.env.REACT_APP_UPLOAD_URL + product?.image?.orginal
+                  process.env.REACT_APP_UPLOAD_URL + product?.image?.url
                 }
                 width={biggerThanSm ? 200 : 115}
                 height={biggerThanSm ? 200 : 115}

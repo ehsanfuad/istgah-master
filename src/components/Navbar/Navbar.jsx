@@ -97,7 +97,6 @@ function Navbar() {
   }, [location.pathname]);
 
   const products = useSelector((state) => state.cart.products);
-  console.log(products);
   const dispatch = useDispatch();
   const jwt = localStorage.getItem("jwt");
   const username = localStorage.getItem("username");

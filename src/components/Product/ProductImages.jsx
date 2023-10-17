@@ -11,6 +11,7 @@ function ProductImages({ image, images: otherImages }) {
   const [images, setImages] = useState(allImages.reverse());
   const [buttonState, setButtonState] = useState({ aghab: true, jolo: true });
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  console.log(images);
   // swipe detection
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
@@ -135,7 +136,9 @@ function ProductImages({ image, images: otherImages }) {
           onTouchEnd={onTouchEnd}
         >
           <LazyImage
-            imageUrl={process.env.REACT_APP_UPLOAD_URL + images[imgSelectedId]}
+            imageUrl={
+              process.env.REACT_APP_UPLOAD_URL + images[imgSelectedId].orginal
+            }
             width={biggerThanMd ? 400 : 300}
             height={biggerThanMd ? 400 : 300}
           />
@@ -175,7 +178,7 @@ function ProductImages({ image, images: otherImages }) {
             onClick={() => handleImgSelect(index)}
           >
             <LazyImage
-              imageUrl={process.env.REACT_APP_UPLOAD_URL + image}
+              imageUrl={process.env.REACT_APP_UPLOAD_URL + image?.orginal}
               width={100}
               height={100}
             />

@@ -43,7 +43,7 @@ function ProductInfoCardMobile({ product, productId }) {
       addToCart({
         id: product.id,
         name: product.name,
-        image: process.env.REACT_APP_UPLOAD_URL + product.image,
+        image: process.env.REACT_APP_UPLOAD_URL + product.image?.orginal,
         price: dynamicType?.price ? dynamicType?.price : product?.price,
         discountedPrice: dynamicType?.discountedPrice
           ? dynamicType?.discountedPrice
