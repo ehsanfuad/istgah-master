@@ -12,6 +12,8 @@ import { FaHandHoldingHeart } from "react-icons/fa";
 import { BiChevronLeft } from "react-icons/bi";
 import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../../../Theme";
+import { convertToPersianDate } from "../../../../hooks/numberUtils";
+import LazyImage from "../../../../components/LazyImage/LazyImage";
 
 function CardTitle({ tabId }) {
   switch (tabId) {
@@ -70,7 +72,7 @@ function CardTitle({ tabId }) {
       break;
   }
 }
-function OrderCard({ tabId, order }) {
+function OrderCard({ tabId, order, orderId }) {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
     <Box
@@ -91,7 +93,7 @@ function OrderCard({ tabId, order }) {
       >
         <CardTitle tabId={tabId} />
         <Link
-          to={`/profile/orders/${order.id}`}
+          to={`/profile/orders/${orderId}`}
           component={RouterLink}
           underline="none"
         >
@@ -114,7 +116,7 @@ function OrderCard({ tabId, order }) {
             کد سفارش
           </Typography>
           <Typography fontSize="0.9rem" color={theme.palette.grey[900]}>
-            {order.refId}
+            {order.invoiceNumber ? order.invoiceNumber : "ندارد"}
           </Typography>
         </Box>
         <Box
@@ -124,7 +126,7 @@ function OrderCard({ tabId, order }) {
           gap={2}
         >
           <Typography fontSize="0.8rem" color={theme.palette.grey[500]}>
-            {order.date}
+            {convertToPersianDate(order.publishedAt)}
           </Typography>
           <Typography fontSize="0.9rem" color={theme.palette.grey[900]}>
             {order.price} تومان
@@ -137,11 +139,11 @@ function OrderCard({ tabId, order }) {
           {order.products.map((product, index) => (
             <Grid item xs={1.5} sm={1.5} md={1.5} lg={1.5} key={index}>
               <Link
-                to={`/profile/orders/${order.id}`}
+                to={`/profile/orders/${orderId}`}
                 component={RouterLink}
                 underline="none"
               >
-                <img src={product.imgUrl} width="75%" />
+                <LazyImage imageUrl={product?.image} width={100} height={100} />
               </Link>
             </Grid>
           ))}

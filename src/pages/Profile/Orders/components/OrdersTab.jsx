@@ -4,6 +4,9 @@ import { theme } from "../../../../Theme";
 import TabTitle from "./TabTitle";
 import useClasses from "../../../../hooks/useClasses";
 import OrderCards from "./OrderCards";
+import useFetch from "../../../../hooks/useFetch";
+import jwt_decode from "jwt-decode";
+import Loading from "../../../../components/Loading/Loading";
 
 const initialTabs = { first: false, second: false, third: false };
 
@@ -36,6 +39,36 @@ export default function OrdersTab() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
+  let userId = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    jwtErrorMessage = error.message;
+    console.log("error", error);
+  }
+  const { res, loading, error } = useFetch(
+    `/orders?filters[userId][$eq]=${userId}`
+  );
+
+  if (loading) return <Loading />;
+  if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+
+  const canceled = res.data.filter(
+    (order) => order.attributes.stateOrder === "canceled"
+  );
+  const completed = res.data.filter(
+    (order) => order.attributes.stateOrder === "completed"
+  );
+  const posted = res.data.filter(
+    (order) => order.attributes.stateOrder === "posted"
+  );
   return (
     <>
       <Box mt={2} sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -47,7 +80,11 @@ export default function OrdersTab() {
         >
           <Tab
             label={
-              <TabTitle title="پرداخت شده" count={2} active={tabId["first"]} />
+              <TabTitle
+                title="پرداخت شده"
+                count={completed.length}
+                active={tabId["first"]}
+              />
             }
             onClick={(e) => {
               setTabId({ ...initialTabs, ["first"]: true });
@@ -55,7 +92,11 @@ export default function OrdersTab() {
           />
           <Tab
             label={
-              <TabTitle title="تحویل شده" count={0} active={tabId["second"]} />
+              <TabTitle
+                title="تحویل شده"
+                count={posted.length}
+                active={tabId["second"]}
+              />
             }
             onClick={(e) => {
               setTabId({ ...initialTabs, ["second"]: true });
@@ -63,7 +104,11 @@ export default function OrdersTab() {
           />
           <Tab
             label={
-              <TabTitle title="لغو شده" count={1} active={tabId["third"]} />
+              <TabTitle
+                title="لغو شده"
+                count={canceled.length}
+                active={tabId["third"]}
+              />
             }
             onClick={(e) => {
               setTabId({ ...initialTabs, ["third"]: true });
@@ -72,13 +117,13 @@ export default function OrdersTab() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <OrderCards tabId={0} />
+        <OrderCards tabId={0} orders={completed} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <OrderCards tabId={1} />
+        <OrderCards tabId={1} orders={posted} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <OrderCards tabId={2} />
+        <OrderCards tabId={2} orders={canceled} />
       </TabPanel>
     </>
   );

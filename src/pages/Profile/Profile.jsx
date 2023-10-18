@@ -34,13 +34,13 @@ function Profile() {
 
   const canceled = res.data.filter(
     (order) => order.attributes.stateOrder === "canceled"
-  ).length;
+  );
   const completed = res.data.filter(
     (order) => order.attributes.stateOrder === "completed"
-  ).length;
+  );
   const posted = res.data.filter(
     (order) => order.attributes.stateOrder === "posted"
-  ).length;
+  );
 
   return (
     <Box p={2} display="flex" flexDirection="column">
@@ -84,19 +84,19 @@ function Profile() {
           <Box>
             <OrderSummery
               icon={<BsBagPlusFill size="3rem" color="#0073cf" />}
-              ordercount={completed}
+              ordercount={completed.length}
               title="پرداخت شده"
             />
           </Box>
           <OrderSummery
             icon={<BsFillBagCheckFill size="3rem" color="#007500" />}
-            ordercount={posted}
+            ordercount={posted.length}
             title="ارسال شده"
           />
           <Box>
             <OrderSummery
               icon={<BsBagXFill size="3rem" color="#750000" />}
-              ordercount={canceled}
+              ordercount={canceled.length}
               title="لغو شده"
             />
           </Box>

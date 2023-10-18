@@ -14,6 +14,11 @@ import TitleContent from "./TitleContent";
 import Dot from "../../components/Dot";
 import ProgressBar from "./ProgressBar";
 import ProductOrderDetails from "./ProductOrderDetails";
+import { useParams } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import useFetch from "../../../../hooks/useFetch";
+import Loading from "../../../../components/Loading/Loading";
+import { convertGregorianToPersianWithDayOfWeek } from "../../../../hooks/numberUtils";
 
 const StyledBox = styled(Box)(({ theme, pd, gp }) => ({
   display: "flex",
@@ -72,6 +77,37 @@ const products = [
 ];
 function OrderDetails() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const params = useParams();
+  const orderId = params.id;
+
+  const jwt = localStorage.getItem("jwt");
+  let jwtErrorMessage = null;
+  let userId = null;
+  let order = null;
+  try {
+    const decoded = jwt_decode(jwt);
+    userId = decoded.id;
+  } catch (error) {
+    jwtErrorMessage = error.message;
+    console.log("error", error);
+  }
+  const { res, loading, error } = useFetch(
+    `/orders?filters[userId][$eq]=${userId}&filters[id][$eq]=${orderId}`
+  );
+
+  if (loading) return <Loading />;
+  if ((!loading && res?.error?.status > 400) || jwtErrorMessage) {
+    localStorage.removeItem("jwt");
+    window.location.reload(false);
+  }
+  order = res?.data[0]?.attributes;
+
+  if (!order)
+    return (
+      <Box p={2}>
+        <BackButton title="جزئیات سفارش" backUrl="/profile/orders" />
+      </Box>
+    );
   return (
     <Box display="flex" flexDirection="column">
       <Box p={2}>
@@ -80,9 +116,17 @@ function OrderDetails() {
       <Divider flexItem />
       {/* پیگیری سفارش تاریخ ثبت */}
       <StyledBox pd="1rem" gp="1rem">
-        <TitleContent title={"کد پیگیری سفارش"} content={"۳۳۲۳۰۲۱۴۰"} />
+        <TitleContent
+          title={"کد پیگیری سفارش"}
+          content={order.invoiceNumber ? order.invoiceNumber : "ندارد"}
+        />
         <Dot />
-        <TitleContent title={"تاریخ ثبت سفارش"} content={"یکشنبه ۱۵ تیر "} />
+        <TitleContent
+          title={"تاریخ ثبت سفارش"}
+          content={convertGregorianToPersianWithDayOfWeek(
+            "2023-10-18T09:40:57.708Z"
+          )}
+        />
       </StyledBox>
       <Divider variant="middle" flexItem />
       {/* تحویل گیرنده تاریخ ثبت */}
