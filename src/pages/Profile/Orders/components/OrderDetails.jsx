@@ -18,7 +18,11 @@ import { useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import useFetch from "../../../../hooks/useFetch";
 import Loading from "../../../../components/Loading/Loading";
-import { convertGregorianToPersianWithDayOfWeek } from "../../../../hooks/numberUtils";
+import {
+  convertToPersianDate,
+  formatMoney,
+} from "../../../../hooks/numberUtils";
+import ProductCard from "../../../../components/Cart/ProductCard";
 
 const StyledBox = styled(Box)(({ theme, pd, gp }) => ({
   display: "flex",
@@ -30,51 +34,7 @@ const StyledBox = styled(Box)(({ theme, pd, gp }) => ({
   gap: gp,
   padding: pd,
 }));
-const products = [
-  {
-    id: 1,
-    specialSale: true,
-    imgUrl:
-      "https://dkstatics-public.digikala.com/digikala-products/fa5961b7d2a4efb180d686f6f69dd45381a4d3dd_1649056488.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-    title:
-      "گوشی موبایل اپل مدل iPhone 13 Pro Max A2644 دو سیم‌ کارت ظرفیت 256 گیگابایت و رم 6 گیگابایت",
-    stockNumber: 3,
-    rate: "۴.۳",
-    price: 5000000,
-    discountedPrice: 3304355,
-    discount: 3,
-    category: 6,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    specialSale: false,
-    imgUrl:
-      "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-    title: "قاب مدل سیلیکونی مناسب برای گوشی موبایل اپل iphone ۱۲ pro",
-    stockNumber: 10,
-    rate: "۴",
-    price: 1000000,
-    discountedPrice: 55000,
-    discount: null,
-    category: 9,
-    quantity: 1,
-  },
-  {
-    id: 3,
-    specialSale: false,
-    imgUrl:
-      "https://dkstatics-public.digikala.com/digikala-products/90fc87b40eb1249673b9d0089aca514443a04edf_1619112519.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_90",
-    title: "قاب صورتی",
-    stockNumber: 10,
-    rate: "۴",
-    price: 4700000,
-    discountedPrice: 350000,
-    discount: null,
-    category: 12,
-    quantity: 1,
-  },
-];
+
 function OrderDetails() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const params = useParams();
@@ -91,8 +51,9 @@ function OrderDetails() {
     jwtErrorMessage = error.message;
     console.log("error", error);
   }
+
   const { res, loading, error } = useFetch(
-    `/orders?filters[userId][$eq]=${userId}&filters[id][$eq]=${orderId}`
+    `/order/orderDetails/${userId}/${orderId}`
   );
 
   if (loading) return <Loading />;
@@ -100,7 +61,8 @@ function OrderDetails() {
     localStorage.removeItem("jwt");
     window.location.reload(false);
   }
-  order = res?.data[0]?.attributes;
+  console.log(res);
+  order = res;
 
   if (!order)
     return (
@@ -123,36 +85,37 @@ function OrderDetails() {
         <Dot />
         <TitleContent
           title={"تاریخ ثبت سفارش"}
-          content={convertGregorianToPersianWithDayOfWeek(
-            "2023-10-18T09:40:57.708Z"
-          )}
+          content={convertToPersianDate(order.publishedAt)}
         />
       </StyledBox>
       <Divider variant="middle" flexItem />
       {/* تحویل گیرنده تاریخ ثبت */}
       <StyledBox pd="1rem" gp="1rem">
-        <TitleContent title={"تحویل گیرنده"} content={"فواد صدر"} />
+        <TitleContent title={"تحویل گیرنده"} content={order.fullName} />
         <Dot />
-        <TitleContent title={"شماره موبایل"} content={"۰۹۰۳۰۴۸۳۳۴۵"} />
+        <TitleContent title={"شماره موبایل"} content={order.mobile} />
       </StyledBox>
       {/* آدرس */}
       <Box display="flex" flexDirection={"column"} gap={0.5} px={2} pb={2}>
         <TitleContent
           title={"آدرس"}
-          content={"امیر آباد، خ. کارگر شمالی، خ. فرشی مقدم"}
+          content={order.address}
           direction="column"
         />
       </Box>
       <Divider flexItem />
       {/* مبلغ نوع پرداخت */}
       <StyledBox pd="1rem" gp="1rem">
-        <TitleContent title={"مبلغ"} content={"۳۰۱,۵۹۰ تومان"} />
+        <TitleContent
+          title={"مبلغ"}
+          content={`${formatMoney(order.price)} ریال`}
+        />
         <Dot />
         <TitleContent title={"نوع پرداخت"} content={"پرداخت اینترنتی"} />
       </StyledBox>
       <Divider flexItem />
       {/* زمان تحویل - نمایش محصولات */}
-      <Box
+      {/* <Box
         border={biggerThanMd ? 1 : 0}
         borderRadius={2}
         borderColor={theme.palette.grey[300]}
@@ -162,31 +125,37 @@ function OrderDetails() {
       >
         <Box display="flex" flexDirection={biggerThanMd ? "row" : "column"}>
           <Box flex={1} display="flex" flexDirection="column" gap={2} p={2}>
-            {/* نوع ارسال -زمان تحویل */}
+           
             <TitleContent title={"ارسال"} content={"پست"} />
             <TitleContent
               title={"زمان تحویل"}
               content={"یکشنبه ۲۴ اردیبهشت بازه ۳۲-۱۵  "}
             />
-            {/* هزینه ارسال مبلغ مرسوله */}
+            
             <StyledBox gap={2}>
               <TitleContent title={"هزینه ارسال"} content={"رایگان"} />
               <Dot />
               <TitleContent title={"مبلغ مرسوله"} content={"۲۸۲,۵۹۰ تومان"} />
             </StyledBox>
           </Box>
-          {/* progressbar - پیگیری مرسوله */}
+          
           <Box flex={1} order={biggerThanMd ? 0 : -1} p={2}>
             <ProgressBar orderstate="paid" />
           </Box>
         </Box>
       </Box>
-      <Divider variant="middle" />
+      <Divider variant="middle" /> */}
       <Box>
-        {products.map((product, index) => (
+        {order.products.map((product, index) => (
           <Box mt={3} key={index}>
             <Container maxWidth="xl">
-              <ProductOrderDetails product={product} key={index} border={0} />
+              {/* <ProductOrderDetails product={product} key={index} border={0} /> */}
+              <ProductCard
+                product={product}
+                key={index}
+                border={1}
+                counterCart={false}
+              />
             </Container>
             <Divider variant="middle" />
           </Box>

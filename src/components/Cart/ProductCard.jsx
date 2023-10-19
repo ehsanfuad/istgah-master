@@ -6,7 +6,7 @@ import { formatNumber } from "../../hooks/numberUtils";
 import DynamicPropCart from "./DynamicPropCart";
 import LazyImage from "../LazyImage/LazyImage";
 
-function ProductCard({ product, border }) {
+function ProductCard({ product, border, counterCart = true }) {
   return (
     <Box
       display="flex"
@@ -20,7 +20,12 @@ function ProductCard({ product, border }) {
     >
       <Box maxWidth="116px" flex={1} display="flex" flexDirection="column">
         <LazyImage imageUrl={product?.image} width={116} height={100} />
-        <CounterCart product={product} />
+        {counterCart && <CounterCart product={product} />}
+        {!counterCart && (
+          <Box display="flex" justifyContent="center" sx={{ width: "100%" }}>
+            {formatNumber(product.quantity)}
+          </Box>
+        )}
       </Box>
       <Box flex={2} display="flex" flexDirection="column" gap={1}>
         <Typography className="noselect" fontSize="0.9rem" lineHeight={2}>

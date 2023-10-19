@@ -15,16 +15,20 @@ function TitleContent({ title, content, direction }) {
         gap={1}
         justifyContent={biggerThanMd ? "" : "space-between"}
       >
-        <Typography
-          variant="subtitle1"
-          fontSize="0.9rem"
-          color={theme.palette.grey[600]}
-        >
-          {title}
-        </Typography>
-        <Typography fontSize="0.9rem" variant="body1">
-          {content}
-        </Typography>
+        <Box display="flex" alignItems="center">
+          <Typography
+            variant="subtitle1"
+            fontSize="0.9rem"
+            color={theme.palette.grey[600]}
+          >
+            {title}
+          </Typography>
+        </Box>
+        <Box display="flex" alignItems="center">
+          <Typography fontSize="0.9rem" variant="body1">
+            {content}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

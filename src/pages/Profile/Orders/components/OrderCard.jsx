@@ -12,7 +12,10 @@ import { FaHandHoldingHeart } from "react-icons/fa";
 import { BiChevronLeft } from "react-icons/bi";
 import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../../../Theme";
-import { convertToPersianDate } from "../../../../hooks/numberUtils";
+import {
+  convertToPersianDate,
+  formatMoney,
+} from "../../../../hooks/numberUtils";
 import LazyImage from "../../../../components/LazyImage/LazyImage";
 
 function CardTitle({ tabId }) {
@@ -129,7 +132,7 @@ function OrderCard({ tabId, order, orderId }) {
             {convertToPersianDate(order.publishedAt)}
           </Typography>
           <Typography fontSize="0.9rem" color={theme.palette.grey[900]}>
-            {order.price} تومان
+            {formatMoney(order.price)} ریال
           </Typography>
         </Box>
       </Box>
@@ -143,7 +146,11 @@ function OrderCard({ tabId, order, orderId }) {
                 component={RouterLink}
                 underline="none"
               >
-                <LazyImage imageUrl={product?.image} width={100} height={100} />
+                <LazyImage
+                  imageUrl={product?.image}
+                  width={"100%"}
+                  height={"100%"}
+                />
               </Link>
             </Grid>
           ))}

@@ -1,5 +1,5 @@
 import { InputBase, alpha, styled } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { MdSearch, MdCoffeeMaker } from "react-icons/md";
 const SearchBox = styled("div")(({ theme }) => ({
   position: "relative",
@@ -48,6 +48,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 function Search({ placeholder }) {
+  const [text, setText] = useState("");
+
+  useEffect(() => {}, [text]);
+
+  const handleChange = (event) => {
+    const { value } = event.target;
+    setText(value);
+  };
   return (
     <SearchBox>
       <SearchIconWrapper>
@@ -56,6 +64,7 @@ function Search({ placeholder }) {
       <StyledInputBase
         placeholder={placeholder}
         inputProps={{ "aria-label": "search" }}
+        onChange={handleChange}
       />
     </SearchBox>
   );

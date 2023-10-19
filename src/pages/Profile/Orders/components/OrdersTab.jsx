@@ -51,7 +51,7 @@ export default function OrdersTab() {
     console.log("error", error);
   }
   const { res, loading, error } = useFetch(
-    `/orders?filters[userId][$eq]=${userId}`
+    `/orders?filters[userId][$eq]=${userId}&sort[0]=createdAt:desc`
   );
 
   if (loading) return <Loading />;
