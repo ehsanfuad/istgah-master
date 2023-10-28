@@ -5,9 +5,15 @@ import BackButton from "../components/BackButton";
 import { theme } from "../../../Theme";
 import Search from "../../../components/Search/Search";
 import OrdersTab from "./components/OrdersTab";
+import { useLocation } from "react-router-dom";
 
 function Orders() {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const authority = queryParams.get("Authority");
+  const status = queryParams.get("Status");
+  console.log(status, authority);
   return (
     <Box dispaly="flex" flexDirection="column" gap={1}>
       <Box p={2} display={biggerThanMd ? "none" : "block"}>

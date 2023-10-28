@@ -27,6 +27,7 @@ function Product() {
   );
   const mobileVersion = useMediaQuery(theme.breakpoints.down("md"));
   if (loading) return "...";
+
   return (
     <Box sx={{ paddingBottom: mobileVersion ? "82px" : "0" }}>
       <Container maxWidth="xl">
@@ -34,7 +35,7 @@ function Product() {
           <Breadcrumb categoryId={categoryId} />
         </Box>
         <Box display="flex" sx={{ flexDirection: { xs: "column", md: "row" } }}>
-          <Box flex={2}>
+          <Box flex={2} maxWidth="500px">
             <ProductImages image={product.image} images={product.images} />
           </Box>
           <Box flex={3} sx={{ pr: { md: 0.5 } }}>

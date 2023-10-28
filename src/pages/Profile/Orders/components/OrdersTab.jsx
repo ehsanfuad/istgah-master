@@ -29,6 +29,7 @@ export default function OrdersTab() {
       },
     },
   });
+
   const classes = useClasses(styles);
   const [value, setValue] = useState(0);
   const [tabId, setTabId] = useState({
@@ -69,6 +70,7 @@ export default function OrdersTab() {
   const posted = res.data.filter(
     (order) => order.attributes.stateOrder === "posted"
   );
+
   return (
     <>
       <Box mt={2} sx={{ borderBottom: 1, borderColor: "divider" }}>

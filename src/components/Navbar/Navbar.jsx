@@ -38,6 +38,7 @@ import { getCartQuantity } from "../../hooks/numberUtils";
 import { setBackUrl } from "../../store/urlReducer";
 import { CiCoffeeBean, CiSettings } from "react-icons/ci";
 import { MdCoffeeMaker } from "react-icons/md";
+import { GiCoffeePot } from "react-icons/gi";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -70,6 +71,8 @@ const getIcon = (index) => {
       return <CiSettings />;
     case 3:
       return <TbMug />;
+    case 4:
+      return <GiCoffeePot />;
     default:
       break;
   }
@@ -84,7 +87,7 @@ function Navbar() {
   const [eventCart, setEventCart] = useState(null);
   const [isShowCart, setIsShowCart] = useState(true);
 
-  const { res, loading, error } = useFetch(`/category/getAll`);
+  const { res, loading, error } = useFetch(`/category/getAll?sort[0]=id:desc`);
 
   const location = useLocation();
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
